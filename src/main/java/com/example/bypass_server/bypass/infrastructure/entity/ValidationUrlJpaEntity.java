@@ -1,5 +1,6 @@
 package com.example.bypass_server.bypass.infrastructure.entity;
 
+
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -12,7 +13,6 @@ import lombok.NoArgsConstructor;
 public class ValidationUrlJpaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "validation_url_id")
     private Long id;
     private String url;
     private String validationType;

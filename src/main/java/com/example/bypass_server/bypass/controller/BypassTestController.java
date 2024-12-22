@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class BypassTestController {
     @RequestMapping("/test-me")
     public Object bypassHandler() {
-        return null;
+        return "ok";
     }
 }

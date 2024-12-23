@@ -1,5 +1,6 @@
 package com.example.bypass_server.bypass.domain;
 
+import com.example.bypass_server.bypass.infrastructure.entity.ValidationUrlCacheEntity;
 import com.example.bypass_server.bypass.infrastructure.entity.ValidationUrlJpaEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -37,4 +38,19 @@ public class ValidationUrl {
                 .build();
     }
 
+    public ValidationUrlCacheEntity toCacheEntity() {
+        return ValidationUrlCacheEntity.builder()
+                .id(this.id)
+                .url(this.url)
+                .validationType(this.validationType.name())
+                .build();
+    }
+
+    public static ValidationUrl fromCacheEntity(ValidationUrlCacheEntity entity) {
+        return ValidationUrl.builder()
+                .id(entity.getId())
+                .url(entity.getUrl())
+                .validationType(ValidationType.valueOf(entity.getValidationType()))
+                .build();
+    }
 }

@@ -40,8 +40,7 @@ public class RequestValidCheckFilter implements Filter {
             return;
         }
         String requestKey = env.getProperty("spring.application.request.type-name");
-        String requestType = validationUrl.get().getValidationType().name();
-        servletRequest.setAttribute(requestKey, requestType);
+        servletRequest.setAttribute(requestKey, validationUrl.get().getValidationType());
         filterChain.doFilter(servletRequest, servletResponse);
     }
     @Override

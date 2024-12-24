@@ -1,5 +1,6 @@
 package com.example.bypass_server.bypass.service.impl;
 
+import com.example.bypass_server.bypass.domain.ValidationType;
 import com.example.bypass_server.bypass.domain.ValidationUrl;
 import com.example.bypass_server.bypass.filter.port.ValidUrlReadService;
 import com.example.bypass_server.bypass.service.port.ValidationUrlCache;
@@ -12,7 +13,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UrlValidationServiceImpl implements ValidUrlReadService {
+public class UrlValidationRedisServiceImpl implements ValidUrlReadService {
     private final ValidationUrlCache cache;
     private final ValidationUrlRepository repository;
     @Override
@@ -30,6 +31,15 @@ public class UrlValidationServiceImpl implements ValidUrlReadService {
 
     @PostConstruct
     void init() {
-
+        cache.write(ValidationUrl.builder()
+                .id(1L)
+                .url("/test-me")
+                .validationType(ValidationType.DUPLICATE_CHECK)
+                .build());
+        repository.save(ValidationUrl.builder()
+                .id(1L)
+                .url("/test-me")
+                .validationType(ValidationType.DUPLICATE_CHECK)
+                .build());
     }
 }

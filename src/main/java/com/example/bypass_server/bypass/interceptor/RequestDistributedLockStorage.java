@@ -1,4 +1,4 @@
-package com.example.bypass_server.interceptor.port;
+package com.example.bypass_server.bypass.interceptor;
 
 public interface RequestDistributedLockStorage {
     boolean isLocked(String id, String url);

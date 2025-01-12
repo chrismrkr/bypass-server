@@ -3,12 +3,10 @@ package com.example.bypass_server.bypass.infrastructure.impl;
 import com.example.bypass_server.bypass.domain.ValidationUrl;
 import com.example.bypass_server.bypass.infrastructure.entity.ValidationUrlCacheEntity;
 import com.example.bypass_server.bypass.service.port.ValidationUrlCache;
-import com.example.bypass_server.interceptor.port.RequestDistributedLockStorage;
-import lombok.RequiredArgsConstructor;
+import com.example.bypass_server.bypass.interceptor.RequestDistributedLockStorage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Repository;
 

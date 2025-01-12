@@ -1,6 +1,6 @@
 package com.example.bypass_server.medium.repository;
 
-import com.example.bypass_server.interceptor.port.RequestDistributedLockStorage;
+import com.example.bypass_server.bypass.interceptor.RequestDistributedLockStorage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

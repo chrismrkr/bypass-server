@@ -2,7 +2,7 @@ package com.example.bypass_server.queueService.service.impl;
 
 import com.example.bypass_server.queueService.domain.ServiceQueuingDetails;
 import com.example.bypass_server.queueService.service.ServiceQueuingDetailsService;
-import com.example.bypass_server.queueService.service.port.DeferredResultEventListener;
+import com.example.bypass_server.queueService.service.port.ServiceQueuingEventResultListener;
 import com.example.bypass_server.queueService.service.port.DeferredResultHolderWriter;
 import com.example.bypass_server.queueService.service.port.ServiceQueuingDetailsProducer;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class ServiceQueuingDetailsServiceImpl implements ServiceQueuingDetailsService {
     private final ServiceQueuingDetailsProducer serviceQueuingDetailsProducer;
     private final DeferredResultHolderWriter<ServiceQueuingDetails> deferredResultHolder;
-    private final DeferredResultEventListener deferredResultEventListener;
+    private final ServiceQueuingEventResultListener serviceQueuingEventResultListener;
 
     @Override
     public DeferredResult<ServiceQueuingDetails> queueService(String clientUniqueKey, String method) {

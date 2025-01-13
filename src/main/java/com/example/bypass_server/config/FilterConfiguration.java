@@ -1,4 +1,4 @@
-package com.example.bypass_server.duplicateCheck.config;
+package com.example.bypass_server.config;
 
 import com.example.bypass_server.duplicateCheck.filter.RequestValidCheckFilter;
 import com.example.bypass_server.duplicateCheck.filter.port.ValidUrlReadService;

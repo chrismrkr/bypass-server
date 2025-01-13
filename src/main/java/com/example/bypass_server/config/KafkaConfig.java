@@ -1,4 +1,4 @@
-package com.example.bypass_server.queueService.config;
+package com.example.bypass_server.config;
 
 import com.example.bypass_server.queueService.domain.ServiceQueuingDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -63,8 +63,6 @@ public class KafkaConfig {
     public DefaultKafkaConsumerFactory<String, ServiceQueuingDetails> serviceQueuingTopicConsumerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("spring.kafka.bootstrap-servers"));
-//        configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-//        configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         configProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         configProps.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false); // manual commit
         return new DefaultKafkaConsumerFactory<>(

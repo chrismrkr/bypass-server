@@ -1,4 +1,4 @@
-package com.example.bypass_server.duplicateCheck.config;
+package com.example.bypass_server.config;
 
 import com.example.bypass_server.duplicateCheck.interceptor.UrlValidationInterceptor;
 import com.example.bypass_server.duplicateCheck.interceptor.RequestDistributedLockStorage;

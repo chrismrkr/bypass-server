@@ -1,5 +1,6 @@
 package com.example.bypass_server.queueService.config;
 
+import com.example.bypass_server.queueService.domain.ServiceQueuingDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -51,22 +52,26 @@ public class KafkaConfig {
     }
 
     @Bean(name = "serviceQueuingTopicKafkaConsumerFactory")
-    public ConcurrentKafkaListenerContainerFactory<String, Object> serviceQueuingTopicKafkaConsumerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public ConcurrentKafkaListenerContainerFactory<String, ServiceQueuingDetails> serviceQueuingTopicKafkaConsumerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, ServiceQueuingDetails> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(serviceQueuingTopicConsumerFactory());
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
         return factory;
     }
 
     @Bean
-    public ConsumerFactory<String, Object> serviceQueuingTopicConsumerFactory() {
+    public DefaultKafkaConsumerFactory<String, ServiceQueuingDetails> serviceQueuingTopicConsumerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("spring.kafka.bootstrap-servers"));
-        configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+//        configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+//        configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         configProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         configProps.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false); // manual commit
-        return new DefaultKafkaConsumerFactory<>(configProps);
+        return new DefaultKafkaConsumerFactory<>(
+                configProps,
+                new StringDeserializer(),
+                jsonDeserializer()
+        );
     }
 
     @Bean
@@ -78,6 +83,12 @@ public class KafkaConfig {
                 .build(), ObjectMapper.DefaultTyping.NON_FINAL
         );
         return objectMapper;
+    }
+
+    @Bean
+    public JsonDeserializer<ServiceQueuingDetails> jsonDeserializer() {
+        JsonDeserializer<ServiceQueuingDetails> serviceQueuingDetailsJsonDeserializer = new JsonDeserializer<>(ServiceQueuingDetails.class);
+        return serviceQueuingDetailsJsonDeserializer;
     }
 
     @Getter

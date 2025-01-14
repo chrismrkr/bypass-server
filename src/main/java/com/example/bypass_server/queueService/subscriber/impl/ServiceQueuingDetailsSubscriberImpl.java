@@ -20,7 +20,13 @@ public class ServiceQueuingDetailsSubscriberImpl implements ServiceQueuingDetail
             containerFactory = "serviceQueuingTopicKafkaConsumerFactory"
     )
     public void subscribeServiceQueueDetails(ConsumerRecord<String, ServiceQueuingDetails> records, Acknowledgment ack) {
+        /**
+         * TODO. 비즈니스 로직 실행
+         */
         ack.acknowledge();
         log.info("[Kafka SUBSCRIBE] {} consumed", records.key());
+        /**
+         * TODO. Redis PUB
+         */
     }
 }

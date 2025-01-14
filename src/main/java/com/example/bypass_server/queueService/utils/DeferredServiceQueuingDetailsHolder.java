@@ -1,7 +1,6 @@
-package com.example.bypass_server.queueService.infrastructure;
+package com.example.bypass_server.queueService.utils;
 
 import com.example.bypass_server.queueService.domain.ServiceQueuingDetails;
-import com.example.bypass_server.queueService.service.ServiceQueuingDetailsService;
 import com.example.bypass_server.queueService.service.port.DeferredResultHolderWriter;
 import com.example.bypass_server.queueService.subscriber.port.DeferredResultHolderReader;
 import org.springframework.stereotype.Component;

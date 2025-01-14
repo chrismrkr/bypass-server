@@ -27,16 +27,9 @@ public class ServiceQueuingDetailsServiceImpl implements ServiceQueuingDetailsSe
                 .method(method)
                 .parameters(null)
                 .build();
-
-        // 1. add queue
+        serviceQueuingEventResultListener.listenToChannel(Long.toString(requestId), null);
         serviceQueuingDetailsProducer.publish(clientUniqueKey, details);
-
-        // 2. save deferredResult
         deferredResultHolder.save(requestId, request);
-
-        // 3. subscribe DeferredResultEvent
-
-
         return request;
     }
 }

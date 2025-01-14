@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class ServiceQueuingEventResultRedisListener implements ServiceQueuingEventResultListener {
+public class ServiceQueuingEventRedisListener implements ServiceQueuingEventResultListener {
     private final RedisMessageListenerContainer messageListenerContainer;
     @Override
     public void listenToChannel(String channelName, MessageListenerAdapter listenerAdapter) {
@@ -18,4 +18,5 @@ public class ServiceQueuingEventResultRedisListener implements ServiceQueuingEve
         // MessageListenerAdaptor에 메세지를 받은 이후에 어떻게 처리할지를 정의하면 됨
         // 저기에 DeferredResult를 resolve하는 로직을 넣으면 될 듯함
     }
+
 }

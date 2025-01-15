@@ -1,4 +1,4 @@
-package com.example.bypass_server.queueService.service.port;
+package com.example.bypass_server.queueService.adaptor.port;
 
 import org.springframework.web.context.request.async.DeferredResult;
 

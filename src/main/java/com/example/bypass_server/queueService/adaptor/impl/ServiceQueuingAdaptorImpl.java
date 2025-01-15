@@ -1,12 +1,11 @@
-package com.example.bypass_server.queueService.service.impl;
+package com.example.bypass_server.queueService.adaptor.impl;
 
 import com.example.bypass_server.queueService.domain.ServiceQueuingDetails;
-import com.example.bypass_server.queueService.service.ServiceQueuingDetailsService;
-import com.example.bypass_server.queueService.service.port.ServiceQueuingEventResultListener;
-import com.example.bypass_server.queueService.service.port.DeferredResultHolderWriter;
-import com.example.bypass_server.queueService.service.port.ServiceQueuingDetailsProducer;
+import com.example.bypass_server.queueService.adaptor.ServiceQueuingAdaptor;
+import com.example.bypass_server.queueService.adaptor.port.ServiceQueuingEventResultListener;
+import com.example.bypass_server.queueService.adaptor.port.DeferredResultHolderWriter;
+import com.example.bypass_server.queueService.adaptor.port.ServiceQueuingEventProducer;
 import com.example.bypass_server.queueService.subscriber.handler.ServiceQueuingDetailsEventHandler;
-import jakarta.websocket.MessageHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.stereotype.Component;
@@ -16,8 +15,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @Component
 @RequiredArgsConstructor
-public class ServiceQueuingDetailsServiceImpl implements ServiceQueuingDetailsService {
-    private final ServiceQueuingDetailsProducer serviceQueuingDetailsProducer;
+public class ServiceQueuingAdaptorImpl implements ServiceQueuingAdaptor {
+    private final ServiceQueuingEventProducer serviceQueuingEventProducer;
     private final DeferredResultHolderWriter<ServiceQueuingDetails> deferredResultHolder;
     private final ServiceQueuingEventResultListener serviceQueuingEventResultListener;
 
@@ -36,7 +35,7 @@ public class ServiceQueuingDetailsServiceImpl implements ServiceQueuingDetailsSe
                 .method(method)
                 .parameters(param)
                 .build();
-        serviceQueuingDetailsProducer.publish(clientUniqueKey, details);
+        serviceQueuingEventProducer.publish(clientUniqueKey, details);
 
         return request;
     }

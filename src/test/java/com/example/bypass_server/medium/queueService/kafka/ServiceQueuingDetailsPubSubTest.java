@@ -1,7 +1,7 @@
 package com.example.bypass_server.medium.queueService.kafka;
 
 import com.example.bypass_server.queueService.domain.ServiceQueuingDetails;
-import com.example.bypass_server.queueService.service.port.ServiceQueuingDetailsProducer;
+import com.example.bypass_server.queueService.adaptor.port.ServiceQueuingEventProducer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 public class ServiceQueuingDetailsPubSubTest {
     @Autowired
-    ServiceQueuingDetailsProducer serviceQueuingDetailsProducer;
+    ServiceQueuingEventProducer serviceQueuingEventProducer;
 
     @Test
     void ServiceQueueDetails를_Kafka_파티션을_통해_PUB_SUB() throws InterruptedException {
@@ -23,7 +23,7 @@ public class ServiceQueuingDetailsPubSubTest {
                 .build();
 
         // when
-        serviceQueuingDetailsProducer.publish(clientUniqueId, serviceQueuingDetails);
+        serviceQueuingEventProducer.publish(clientUniqueId, serviceQueuingDetails);
         Thread.sleep(2000L);
         // then
 

@@ -1,7 +1,6 @@
 package com.example.bypass_server.queueService.subscriber.impl;
 
-import com.example.bypass_server.bypassTest.handler.RedisMessageHandler;
-import com.example.bypass_server.queueService.service.port.ServiceQueuingEventResultListener;
+import com.example.bypass_server.queueService.adaptor.port.ServiceQueuingEventResultListener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.listener.ChannelTopic;

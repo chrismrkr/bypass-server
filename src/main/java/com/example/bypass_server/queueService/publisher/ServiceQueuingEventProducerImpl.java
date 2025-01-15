@@ -1,7 +1,7 @@
 package com.example.bypass_server.queueService.publisher;
 
 import com.example.bypass_server.queueService.domain.ServiceQueuingDetails;
-import com.example.bypass_server.queueService.service.port.ServiceQueuingDetailsProducer;
+import com.example.bypass_server.queueService.adaptor.port.ServiceQueuingEventProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -13,12 +13,12 @@ import java.util.Objects;
 
 @Component
 @Slf4j
-public class ServiceQueuingDetailsProducerImpl implements ServiceQueuingDetailsProducer {
+public class ServiceQueuingEventProducerImpl implements ServiceQueuingEventProducer {
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final Environment env;
     @Autowired
-    public ServiceQueuingDetailsProducerImpl(@Qualifier("serviceQueuingTopicProducer") KafkaTemplate<String, Object> kafkaTemplate,
-                                             Environment environment) {
+    public ServiceQueuingEventProducerImpl(@Qualifier("serviceQueuingTopicProducer") KafkaTemplate<String, Object> kafkaTemplate,
+                                           Environment environment) {
         this.kafkaTemplate = kafkaTemplate;
         this.env = environment;
     }

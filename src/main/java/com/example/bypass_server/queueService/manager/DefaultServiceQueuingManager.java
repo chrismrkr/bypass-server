@@ -19,7 +19,7 @@ public class DefaultServiceQueuingManager implements ServiceQueuingManager {
     private static final long TIMEOUT_MILLIS = 5000L;
     private static final String TIMEOUT_MSG = "TIME OUT";
     @Override
-    public DeferredResult<ServiceQueuingDetails> execute(String clientUniqueKey, String method, Object param, ServiceQueuingEventHandler messageHandler) {
+    public DeferredResult<ServiceQueuingDetails> execute(ServiceQueuingEventHandler messageHandler, String clientUniqueKey, Object target, String method, Object... param) {
         DeferredResult<ServiceQueuingDetails> request = new DeferredResult<>(TIMEOUT_MILLIS, TIMEOUT_MSG);
         Long requestId = ThreadLocalRandom.current().nextLong();
         this.serviceQueuingAdaptor.getDeferredResultHolderWriter()

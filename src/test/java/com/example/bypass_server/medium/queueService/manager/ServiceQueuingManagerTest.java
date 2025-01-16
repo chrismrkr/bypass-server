@@ -29,13 +29,13 @@ public class ServiceQueuingManagerTest {
         String method = "serviceMethod1";
         String param = "param1";
         // when
-        DeferredResult<ServiceQueuingDetails> execute = serviceQueuingManager.execute(clintUniqueKey, method, param,
+        DeferredResult<ServiceQueuingDetails> execute = serviceQueuingManager.execute(
                 requestId -> {
                     Optional<DeferredResult<ServiceQueuingDetails>> serviceQueuingDetailsDeferredResult =
                             deferredServiceQueuingEventHolder.get(Long.parseLong(requestId));
                     Assertions.assertFalse(serviceQueuingDetailsDeferredResult.isEmpty());
                     flag[0] = true;
-                });
+                }, clintUniqueKey, null, method, param);
         // then
         Thread.sleep(1000L);
         Assertions.assertTrue(flag[0]);
@@ -49,20 +49,20 @@ public class ServiceQueuingManagerTest {
         String method = "serviceMethod1";
         String param = "param1";
         // when
-        DeferredResult<ServiceQueuingDetails> execute1 = serviceQueuingManager.execute(clintUniqueKey, method, param,
+        DeferredResult<ServiceQueuingDetails> execute1 = serviceQueuingManager.execute(
                 requestId -> {
                     Optional<DeferredResult<ServiceQueuingDetails>> serviceQueuingDetailsDeferredResult =
                             deferredServiceQueuingEventHolder.get(Long.parseLong(requestId));
                     Assertions.assertFalse(serviceQueuingDetailsDeferredResult.isEmpty());
                     count[0] += 1;
-                });
-        DeferredResult<ServiceQueuingDetails> execute2 = serviceQueuingManager.execute(clintUniqueKey, method, param,
+                }, clintUniqueKey, null, method, param);
+        DeferredResult<ServiceQueuingDetails> execute2 = serviceQueuingManager.execute(
                 requestId -> {
                     Optional<DeferredResult<ServiceQueuingDetails>> serviceQueuingDetailsDeferredResult =
                             deferredServiceQueuingEventHolder.get(Long.parseLong(requestId));
                     Assertions.assertFalse(serviceQueuingDetailsDeferredResult.isEmpty());
                     count[0] += 1;
-                });
+                }, clintUniqueKey, null, method, param);
         // then
         Thread.sleep(1000L);
         Assertions.assertEquals(count[0], 2);
@@ -75,20 +75,20 @@ public class ServiceQueuingManagerTest {
         String clintUniqueKey = "aabbccddeeffz123fvdfqbb124a";
         String method = "serviceMethod";
         String param = "param1";
+
         // when
         int threadCount = 10;
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
         CountDownLatch latch = new CountDownLatch(threadCount);
         for(int i=0; i<threadCount; i++) {
             int finalI = i;
-            executorService.execute(() -> {
-                DeferredResult<ServiceQueuingDetails> execute = serviceQueuingManager.execute(clintUniqueKey, method + Integer.toString(finalI +1), param,
-                        requestId -> {
-                            Optional<DeferredResult<ServiceQueuingDetails>> serviceQueuingDetailsDeferredResult =
-                                    deferredServiceQueuingEventHolder.get(Long.parseLong(requestId));
-                            Assertions.assertFalse(serviceQueuingDetailsDeferredResult.isEmpty());
-                        });
-            });
+            DeferredResult<ServiceQueuingDetails> execute1 = serviceQueuingManager.execute(
+                    requestId -> {
+                        Optional<DeferredResult<ServiceQueuingDetails>> serviceQueuingDetailsDeferredResult =
+                                deferredServiceQueuingEventHolder.get(Long.parseLong(requestId));
+                        Assertions.assertFalse(serviceQueuingDetailsDeferredResult.isEmpty());
+                        count[0] += 1;
+                    }, clintUniqueKey, null, method, param);
         }
 
         // then

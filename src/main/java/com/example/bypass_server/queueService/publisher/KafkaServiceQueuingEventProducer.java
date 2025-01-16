@@ -24,7 +24,7 @@ public class KafkaServiceQueuingEventProducer implements ServiceQueuingEventProd
     }
 
     @Override
-    synchronized public void publish(String clientUniqueId, ServiceQueuingDetails details) {
+    public void publish(String clientUniqueId, ServiceQueuingDetails details) {
         String topic = env.getProperty("spring.kafka.topic.service-queuing.topic-name");
         kafkaTemplate.send(Objects.requireNonNull(topic), clientUniqueId, details);
         log.info("[Kafka PUBLISH] {}'s method {} produced", clientUniqueId, details.getMethod());

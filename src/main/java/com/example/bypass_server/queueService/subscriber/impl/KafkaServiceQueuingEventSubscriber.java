@@ -2,6 +2,7 @@ package com.example.bypass_server.queueService.subscriber.impl;
 
 import com.example.bypass_server.queueService.domain.ServiceQueuingDetails;
 import com.example.bypass_server.queueService.subscriber.ServiceQueuingDetailsSubscriber;
+import com.example.bypass_server.queueService.subscriber.port.ServiceQueuingResultPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Slf4j
 public class KafkaServiceQueuingEventSubscriber implements ServiceQueuingDetailsSubscriber {
-    private final RedisTemplate<String, String> redisTemplate;
+    private final ServiceQueuingResultPublisher resultPublisher;
     @Override
     @KafkaListener(
             topics = {"#{serviceQueuingTopicConsumerConfig.topicName}"},
@@ -30,7 +31,7 @@ public class KafkaServiceQueuingEventSubscriber implements ServiceQueuingDetails
         /**
          * TODO. Redis PUB
          */
-        Long l = redisTemplate.convertAndSend(Long.toString(serviceQueuingDetails.getRequestId()), Long.toString(serviceQueuingDetails.getRequestId()));
+        resultPublisher.publishResult(Long.toString(serviceQueuingDetails.getRequestId()), serviceQueuingDetails.getRequestId());
         ack.acknowledge();
     }
 }

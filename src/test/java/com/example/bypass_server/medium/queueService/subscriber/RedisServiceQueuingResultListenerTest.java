@@ -1,7 +1,7 @@
 package com.example.bypass_server.medium.queueService.subscriber;
 
 import com.example.bypass_server.queueService.adaptor.port.ServiceQueuingEventResultListener;
-import com.example.bypass_server.queueService.subscriber.handler.ServiceQueuingEventHandler;
+import com.example.bypass_server.queueService.subscriber.handler.ServiceQueuingEventResultHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ public class RedisServiceQueuingResultListenerTest {
     void redis_PUB_메세지를_SUB하여_handle할_수_있음() {
         // given
         final boolean[] flag = {false};
-        ServiceQueuingEventHandler eventHandler = new ServiceQueuingEventHandler() {
+        ServiceQueuingEventResultHandler eventHandler = new ServiceQueuingEventResultHandler() {
             @Override
             public void handleMessage(String requestId) {
                 log.info("[REDIS SUB] success");

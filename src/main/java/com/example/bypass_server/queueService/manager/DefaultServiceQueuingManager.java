@@ -2,7 +2,7 @@ package com.example.bypass_server.queueService.manager;
 
 import com.example.bypass_server.queueService.adaptor.ServiceQueuingAdaptor;
 import com.example.bypass_server.queueService.domain.ServiceQueuingDetails;
-import com.example.bypass_server.queueService.subscriber.handler.ServiceQueuingEventHandler;
+import com.example.bypass_server.queueService.subscriber.handler.ServiceQueuingEventResultHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
@@ -19,7 +19,7 @@ public class DefaultServiceQueuingManager implements ServiceQueuingManager {
     private static final long TIMEOUT_MILLIS = 5000L;
     private static final String TIMEOUT_MSG = "TIME OUT";
     @Override
-    public DeferredResult<ServiceQueuingDetails> execute(ServiceQueuingEventHandler messageHandler, String clientUniqueKey, Object target, String method, Object... param) {
+    public DeferredResult<ServiceQueuingDetails> execute(ServiceQueuingEventResultHandler messageHandler, String clientUniqueKey, Object target, String method, Object... param) {
         DeferredResult<ServiceQueuingDetails> request = new DeferredResult<>(TIMEOUT_MILLIS, TIMEOUT_MSG);
         Long requestId = ThreadLocalRandom.current().nextLong();
         this.serviceQueuingAdaptor.getDeferredResultHolderWriter()
@@ -32,6 +32,7 @@ public class DefaultServiceQueuingManager implements ServiceQueuingManager {
 
         ServiceQueuingDetails details = ServiceQueuingDetails.builder()
                 .requestId(requestId)
+                .target(target)
                 .method(method)
                 .parameters(param)
                 .build();
@@ -39,5 +40,10 @@ public class DefaultServiceQueuingManager implements ServiceQueuingManager {
                 .publish(clientUniqueKey, details);
 
         return request;
+    }
+
+    @Override
+    public DeferredResult<ServiceQueuingDetails> execute(ServiceQueuingEventResultHandler handler, String uniqueClientKey, String targetBeanName, String method, Object... param) {
+        return null;
     }
 }

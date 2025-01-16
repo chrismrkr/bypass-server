@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @SpringBootTest
 public class ServiceQueuingManagerTest {
@@ -44,7 +45,7 @@ public class ServiceQueuingManagerTest {
     @Test
     void 복수_이벤트_처리() throws InterruptedException {
         // given
-        final int[] count = {0};
+        final AtomicInteger[] count = {new AtomicInteger(0)};
         String clintUniqueKey = "aabbccddeeffz123fvdfqbb124a";
         String method = "serviceMethod1";
         String param = "param1";
@@ -54,18 +55,18 @@ public class ServiceQueuingManagerTest {
                     Optional<DeferredResult<ServiceQueuingDetails>> serviceQueuingDetailsDeferredResult =
                             deferredServiceQueuingEventHolder.get(Long.parseLong(requestId));
                     Assertions.assertFalse(serviceQueuingDetailsDeferredResult.isEmpty());
-                    count[0] += 1;
+                    count[0].incrementAndGet();
                 }, clintUniqueKey, null, method, param);
         DeferredResult<ServiceQueuingDetails> execute2 = serviceQueuingManager.execute(
                 requestId -> {
                     Optional<DeferredResult<ServiceQueuingDetails>> serviceQueuingDetailsDeferredResult =
                             deferredServiceQueuingEventHolder.get(Long.parseLong(requestId));
                     Assertions.assertFalse(serviceQueuingDetailsDeferredResult.isEmpty());
-                    count[0] += 1;
+                    count[0].incrementAndGet();
                 }, clintUniqueKey, null, method, param);
         // then
         Thread.sleep(1000L);
-        Assertions.assertEquals(count[0], 2);
+        Assertions.assertEquals(count[0].get(), 2);
     }
 
     @Test

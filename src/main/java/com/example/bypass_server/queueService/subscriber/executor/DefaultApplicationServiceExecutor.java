@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 @Slf4j
@@ -36,10 +37,13 @@ public class DefaultApplicationServiceExecutor implements ApplicationServiceExec
         } catch (NoSuchMethodException e) {
             Method[] methods = target.getClass().getMethods();
             for(Method method : methods) {
-                if(method.getName().equals(methodName) && parameters.length == method.getParameterTypes().length) {
-                    // TODO. primitive - Wrapper
+                if(method.getName().equals(methodName) && parameterTypes.length == method.getParameterTypes().length) {
+                    Optional<Method> foundMethod = getMethodConsideringPrimitiveType(0, target, methodName, parameterTypes);
+                    if(foundMethod.isEmpty()) continue;
+                    return foundMethod.get().invoke(target, parameters);
                 }
             }
+            throw e;
         }
         return targetMethod.invoke(target, parameters);
     }
@@ -55,9 +59,29 @@ public class DefaultApplicationServiceExecutor implements ApplicationServiceExec
         return null;
     }
 
-    private Class<?> resolvePrimitiveType(Class<?> clazz) {
-        return WRAPPER_PRIMITIVE_MAP.getOrDefault(clazz, clazz);
+    private Optional<Method> getMethodConsideringPrimitiveType(int currentIdx, Object target, String method, Class<?>[] parameterTypes) {
+        int limit = parameterTypes.length;
+        if(currentIdx == limit) {
+            try {
+                Method targetMethod = target.getClass().getMethod(method, parameterTypes);
+                return Optional.of(targetMethod);
+            } catch (NoSuchMethodException e) {
+                return Optional.empty();
+            }
+        }
+
+        Class<?> parameterType = parameterTypes[currentIdx];
+        if(WRAPPER_PRIMITIVE_MAP.containsKey(parameterType)) {
+            parameterTypes[currentIdx] = WRAPPER_PRIMITIVE_MAP.get(parameterType);
+            Optional<Method> candidateMethod = getMethodConsideringPrimitiveType(currentIdx + 1, target, method, parameterTypes);
+            if(candidateMethod.isPresent()) {
+                return candidateMethod;
+            }
+        }
+        parameterTypes[currentIdx] = parameterType;
+        return getMethodConsideringPrimitiveType(currentIdx + 1, target, method, parameterTypes);
     }
+
     private static final Map<Class<?>, Class<?>> WRAPPER_PRIMITIVE_MAP = Map.of(
             Integer.class, int.class,
             Double.class, double.class,

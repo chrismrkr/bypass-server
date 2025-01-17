@@ -8,10 +8,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.lang.reflect.InvocationTargetException;
 
-@SpringBootTest
+
 public class DefaultApplicationServiceExecutorTest {
-    @Autowired
-    DefaultApplicationServiceExecutor serviceExecutor;
+
+    DefaultApplicationServiceExecutor serviceExecutor = new DefaultApplicationServiceExecutor(null);
 
     @Test
     void 빈_파라미터() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
@@ -46,13 +46,38 @@ public class DefaultApplicationServiceExecutorTest {
     }
 
     @Test
-    void 여러_파라미터() {
-
+    void 여러_파라미터() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        // given
+        TestClass testClass = new TestClass();
+        int a = 1;
+        int b = 2;
+        int c = 3;
+        // when
+        Object testMultipleParam2 = serviceExecutor.execute(testClass, "testMultipleParam2", a, b, c);
+        // then
+        Assertions.assertTrue((boolean)testMultipleParam2);
     }
 
     @Test
-    void 객체_파라미터() {
+    void 객체_파라미터() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        // given
+        TestClass testClass = new TestClass();
+        TestClass.InnerClass innerClass = new TestClass.InnerClass(1);
+        // when
+        Object result = serviceExecutor.execute(testClass, "testObjectParam", innerClass);
+        // then
+        Assertions.assertEquals(((TestClass.InnerClass)result).anInt, innerClass.anInt);
+    }
 
+    @Test
+    void 복합_파라미터() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        // given
+        TestClass testClass = new TestClass();
+        TestClass.InnerClass innerClass = new TestClass.InnerClass(0);
+        // when
+        Object result = serviceExecutor.execute(testClass, "testEtcParam", innerClass, 1, 3);
+        // then
+        Assertions.assertNotNull(result);
     }
 
     public static class TestClass {
@@ -72,10 +97,14 @@ public class DefaultApplicationServiceExecutorTest {
             return true;
         }
 
+        public boolean testMultipleParam2(Integer i1, Integer i2, int i3) { return true; }
         public InnerClass testObjectParam(InnerClass innerClass) {
             return innerClass;
         }
-
+        public InnerClass testEtcParam(InnerClass innerClass, int a, Integer b) {
+            int c = a+b;
+            return new InnerClass(c);
+        }
         public TestClass() {
 
         }

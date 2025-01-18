@@ -48,16 +48,17 @@ public class DefaultApplicationServiceExecutor implements ApplicationServiceExec
         return targetMethod.invoke(target, parameters);
     }
 
+    @Override
+    public Object execute(String beanName, String methodName, Object... parameters) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        Object target = applicationContext.getBean(beanName);
+        return this.execute(target, methodName, parameters);
+    }
     private Object execute(Object target, String methodName) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Method targetMethod = null;
         targetMethod = target.getClass().getMethod(methodName);
         return targetMethod.invoke(target);
     }
 
-    @Override
-    public Object execute(String beanName, String method, Object... parameter) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        return null;
-    }
 
     private Optional<Method> getMethodConsideringPrimitiveType(int currentIdx, Object target, String method, Class<?>[] parameterTypes) {
         int limit = parameterTypes.length;

@@ -80,6 +80,17 @@ public class DefaultApplicationServiceExecutorTest {
         Assertions.assertNotNull(result);
     }
 
+    @Test
+    void 존재하지_않는_함수() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        // given
+        TestClass testClass = new TestClass();
+        TestClass.InnerClass innerClass = new TestClass.InnerClass(0);
+        // when, then
+        Assertions.assertThrows(NoSuchMethodException.class ,() -> {
+            serviceExecutor.execute(testClass, "testEtcParam", innerClass, 1, 3, 5, 6);
+        });
+    }
+
     public static class TestClass {
         public boolean test() {
             return true;

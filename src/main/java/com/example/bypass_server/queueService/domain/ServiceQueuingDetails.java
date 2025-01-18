@@ -1,5 +1,6 @@
 package com.example.bypass_server.queueService.domain;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -7,8 +8,10 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "@class")
 public class ServiceQueuingDetails {
     private Long requestId;
+    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "@class")
     private Object target;
     private String method;
     private Object[] parameters;

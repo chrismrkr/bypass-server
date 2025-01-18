@@ -7,17 +7,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 @Component
 @Slf4j
 public class KafkaServiceQueuingEventProducer implements ServiceQueuingEventProducer {
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final KafkaTemplate<String, ServiceQueuingDetails> kafkaTemplate;
     private final Environment env;
     @Autowired
-    public KafkaServiceQueuingEventProducer(@Qualifier("serviceQueuingTopicProducer") KafkaTemplate<String, Object> kafkaTemplate,
+    public KafkaServiceQueuingEventProducer(@Qualifier("serviceQueuingTopicProducer") KafkaTemplate<String, ServiceQueuingDetails> kafkaTemplate,
                                             Environment environment) {
         this.kafkaTemplate = kafkaTemplate;
         this.env = environment;
@@ -27,6 +29,5 @@ public class KafkaServiceQueuingEventProducer implements ServiceQueuingEventProd
     public void publish(String clientUniqueId, ServiceQueuingDetails details) {
         String topic = env.getProperty("spring.kafka.topic.service-queuing.topic-name");
         kafkaTemplate.send(Objects.requireNonNull(topic), clientUniqueId, details);
-        log.info("[Kafka PUBLISH] {}'s method {} produced", clientUniqueId, details.getMethod());
     }
 }

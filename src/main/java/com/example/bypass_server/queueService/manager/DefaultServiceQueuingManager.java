@@ -5,6 +5,7 @@ import com.example.bypass_server.queueService.domain.ServiceQueuingDetails;
 import com.example.bypass_server.queueService.subscriber.handler.ServiceQueuingEventResultHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.async.DeferredResult;
@@ -16,8 +17,9 @@ import java.util.concurrent.ThreadLocalRandom;
 @RequiredArgsConstructor
 public class DefaultServiceQueuingManager implements ServiceQueuingManager {
     private final ServiceQueuingAdaptor serviceQueuingAdaptor;
+    private final ApplicationContext applicationContext;
     private static final long TIMEOUT_MILLIS = 5000L;
-    private static final String TIMEOUT_MSG = "TIME OUT";
+    private static final String TIMEOUT_MSG = "TIME_OUT";
     @Override
     public DeferredResult<ServiceQueuingDetails> execute(ServiceQueuingEventResultHandler messageHandler, String clientUniqueKey, Object target, String method, Object... param) {
         DeferredResult<ServiceQueuingDetails> request = new DeferredResult<>(TIMEOUT_MILLIS, TIMEOUT_MSG);
@@ -44,6 +46,7 @@ public class DefaultServiceQueuingManager implements ServiceQueuingManager {
 
     @Override
     public DeferredResult<ServiceQueuingDetails> execute(ServiceQueuingEventResultHandler handler, String uniqueClientKey, String targetBeanName, String method, Object... param) {
-        return null;
+        Object target = applicationContext.getBean(targetBeanName);
+        return this.execute(handler, uniqueClientKey, target, method, param);
     }
 }

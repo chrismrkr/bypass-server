@@ -1,7 +1,6 @@
 package com.example.bypass_server.medium.queueService.manager;
 
-import com.example.bypass_server.bypassTest.service.BypassTestService;
-import com.example.bypass_server.bypassTest.service.QueuedServiceTest;
+import com.example.bypass_server.bypassTest.service.QueuedEventTestService;
 import com.example.bypass_server.queueService.domain.ServiceQueuingDetails;
 import com.example.bypass_server.queueService.manager.ServiceQueuingManager;
 import com.example.bypass_server.queueService.utils.DeferredServiceQueuingEventHolder;
@@ -14,9 +13,6 @@ import org.springframework.web.context.request.async.DeferredResult;
 
 import java.io.Serializable;
 import java.util.Optional;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @SpringBootTest
@@ -25,7 +21,8 @@ public class ServiceQueuingManagerTest {
     ServiceQueuingManager serviceQueuingManager;
     @Autowired
     DeferredServiceQueuingEventHolder deferredServiceQueuingEventHolder;
-
+    @Autowired
+    QueuedEventTestService queuedEventTestService;
     @Test
     void 단일_이벤트_처리() throws InterruptedException {
         // given
@@ -41,7 +38,7 @@ public class ServiceQueuingManagerTest {
                             deferredServiceQueuingEventHolder.get(requestId);
                     Assertions.assertFalse(serviceQueuingDetailsDeferredResult.isEmpty());
                     flag[0] = true;
-                }, clintUniqueKey, new QueuedServiceTest(), method, param);
+                }, clintUniqueKey, queuedEventTestService, method, param);
         // then
         Thread.sleep(1000L);
         Assertions.assertTrue(flag[0]);
@@ -62,7 +59,7 @@ public class ServiceQueuingManagerTest {
                             deferredServiceQueuingEventHolder.get(requestId);
                     Assertions.assertFalse(serviceQueuingDetailsDeferredResult.isEmpty());
                     flag[0] = true;
-                }, clintUniqueKey, "queuedServiceTest", method, param);
+                }, clintUniqueKey, "queuedEventTestService", method, param);
         // then
         Thread.sleep(1000L);
         Assertions.assertTrue(flag[0]);
@@ -83,7 +80,7 @@ public class ServiceQueuingManagerTest {
                             deferredServiceQueuingEventHolder.get(requestId);
                     Assertions.assertFalse(serviceQueuingDetailsDeferredResult.isEmpty());
                     count[0].incrementAndGet();
-                }, clintUniqueKey, new QueuedServiceTest(), method, param);
+                }, clintUniqueKey, queuedEventTestService, method, param);
         DeferredResult<ServiceQueuingDetails> execute2 = serviceQueuingManager.execute(
                 result -> {
                     Long requestId = result.getRequestId();
@@ -91,7 +88,7 @@ public class ServiceQueuingManagerTest {
                             deferredServiceQueuingEventHolder.get(requestId);
                     Assertions.assertFalse(serviceQueuingDetailsDeferredResult.isEmpty());
                     count[0].incrementAndGet();
-                }, clintUniqueKey, new QueuedServiceTest(), method, param);
+                }, clintUniqueKey, queuedEventTestService, method, param);
         // then
         Thread.sleep(1000L);
         Assertions.assertEquals(count[0].get(), 2);

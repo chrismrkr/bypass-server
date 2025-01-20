@@ -9,9 +9,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class DeferredServiceQueuingEventHolder {
-    private final ConcurrentHashMap<Long, DeferredResult<ServiceQueuingDetails>> deferredResultMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Long, DeferredResult<Object>> deferredResultMap = new ConcurrentHashMap<>();
 
-    public void save(Long requestId, DeferredResult<ServiceQueuingDetails> deferredResult) {
+    public void save(Long requestId, DeferredResult<Object> deferredResult) {
         deferredResultMap.put(requestId, deferredResult);
     }
 
@@ -19,8 +19,8 @@ public class DeferredServiceQueuingEventHolder {
         deferredResultMap.remove(requestId);
     }
 
-    public Optional<DeferredResult<ServiceQueuingDetails>> get(Long requestId) {
-        DeferredResult<ServiceQueuingDetails> deferredResult = deferredResultMap.get(requestId);
+    public Optional<DeferredResult<Object>> get(Long requestId) {
+        DeferredResult<Object> deferredResult = deferredResultMap.get(requestId);
         if(deferredResult == null) {
             return Optional.empty();
         } else {

@@ -19,6 +19,10 @@ public class DefaultApplicationServiceExecutor implements ApplicationServiceExec
 
     @Override
     public Object execute(Object target, String methodName, Object... parameters) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        if(target instanceof String) {
+            return this.execute((String)target, methodName, parameters);
+        }
+
         if(parameters == null || parameters.length == 0) {
             return this.execute(target, methodName);
         }

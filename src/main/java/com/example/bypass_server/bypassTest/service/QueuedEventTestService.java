@@ -1,29 +1,33 @@
 package com.example.bypass_server.bypassTest.service;
 
-import com.example.bypass_server.queueService.domain.ServiceQueuingDetails;
 import com.example.bypass_server.queueService.manager.ServiceQueuingManager;
-import com.example.bypass_server.queueService.subscriber.dto.QueuedServiceResult;
 import com.example.bypass_server.queueService.utils.DeferredServiceQueuingEventHolder;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.async.DeferredResult;
 
 @Service("queuedEventTestService")
 @RequiredArgsConstructor
+@Slf4j
 public class QueuedEventTestService {
     private final ServiceQueuingManager serviceQueuingManager;
     private final DeferredServiceQueuingEventHolder deferredServiceQueuingEventHolder;
-    public DeferredResult<String> testMethod(String clientUniqueKey, String s) {
-        DeferredResult<ServiceQueuingDetails> execute = serviceQueuingManager.execute(result -> {
 
-        }, clientUniqueKey, "queuedEventTestService", "testMethod", s);
-        return null;
+    public DeferredResult<Object> doTest(String clientUniqueKey, String s) {
+        DeferredResult<Object> execute = serviceQueuingManager.execute(result -> {
+            Long requestId = result.getRequestId();
+            Object response = result.getResponse();
+            DeferredResult<Object> objectDeferredResult = deferredServiceQueuingEventHolder.get(requestId)
+                    .get();
+            objectDeferredResult.setResult(response);
+            log.info("[Http Request End] {}", requestId);
+        }, clientUniqueKey, "queuedEventTestService", "doService", s);
+        return execute;
     }
 
     public String doService(String s) {
-        return null;
+        return "[doService Method] " + s;
     }
 
 }

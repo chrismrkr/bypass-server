@@ -17,12 +17,11 @@ import java.util.concurrent.ThreadLocalRandom;
 @RequiredArgsConstructor
 public class DefaultServiceQueuingManager implements ServiceQueuingManager {
     private final ServiceQueuingAdaptor serviceQueuingAdaptor;
-    private final ApplicationContext applicationContext;
     private static final long TIMEOUT_MILLIS = 5000L;
     private static final String TIMEOUT_MSG = "TIME_OUT";
     @Override
-    public DeferredResult<ServiceQueuingDetails> execute(ServiceQueuingEventResultHandler messageHandler, String clientUniqueKey, Object target, String method, Object... param) {
-        DeferredResult<ServiceQueuingDetails> request = new DeferredResult<>(TIMEOUT_MILLIS, TIMEOUT_MSG);
+    public DeferredResult<Object> execute(ServiceQueuingEventResultHandler messageHandler, String partitioningKey, Object target, String method, Object... param) {
+        DeferredResult<Object> request = new DeferredResult<>(TIMEOUT_MILLIS, TIMEOUT_MSG);
         Long requestId = ThreadLocalRandom.current().nextLong();
         this.serviceQueuingAdaptor.getDeferredResultHolderWriter()
                 .save(requestId, request);
@@ -39,14 +38,9 @@ public class DefaultServiceQueuingManager implements ServiceQueuingManager {
                 .parameters(param)
                 .build();
         this.serviceQueuingAdaptor.getServiceQueuingEventProducer()
-                .publish(clientUniqueKey, details);
+                .publish(partitioningKey, details);
 
         return request;
     }
 
-    @Override
-    public DeferredResult<ServiceQueuingDetails> execute(ServiceQueuingEventResultHandler handler, String uniqueClientKey, String targetBeanName, String method, Object... param) {
-        Object target = applicationContext.getBean(targetBeanName);
-        return this.execute(handler, uniqueClientKey, target, method, param);
-    }
 }

@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.async.DeferredResult;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,8 +23,8 @@ public class BypassTestController {
     }
 
     @PostMapping("/queued-event-test")
-    public BypassTestResponseDTO queuedEventHandler(@RequestBody BypassTestRequestDto requestDto) {
-        queuedEventTestService.testMethod(requestDto.getKey(), requestDto.getMsg());
+    public DeferredResult<BypassTestResponseDTO> queuedEventHandler(@RequestBody BypassTestRequestDto requestDto) {
+        queuedEventTestService.doTest(requestDto.getKey(), requestDto.getMsg());
         return null;
     }
 

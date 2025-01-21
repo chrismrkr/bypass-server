@@ -16,12 +16,9 @@ public class QueuedEventTestService {
 
     public DeferredResult<Object> doTest(String clientUniqueKey, String s) {
         DeferredResult<Object> execute = serviceQueuingManager.execute(result -> {
-            Long requestId = result.getRequestId();
-            Object response = result.getResponse();
-            DeferredResult<Object> objectDeferredResult = deferredServiceQueuingEventHolder.get(requestId)
+            DeferredResult<Object> objectDeferredResult = deferredServiceQueuingEventHolder.get(result.getRequestId())
                     .get();
-            objectDeferredResult.setResult(response);
-            log.info("[Http Request End] {}", requestId);
+            objectDeferredResult.setResult(result.getResponse());
         }, clientUniqueKey, "queuedEventTestService", "doService", s);
         return execute;
     }

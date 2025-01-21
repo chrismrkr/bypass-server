@@ -4,6 +4,8 @@ import com.example.bypass_server.bypassTest.service.QueuedEventTestService;
 import com.example.bypass_server.queueService.domain.ServiceQueuingDetails;
 import com.example.bypass_server.queueService.manager.ServiceQueuingManager;
 import com.example.bypass_server.queueService.utils.DeferredServiceQueuingEventHolder;
+import com.example.bypass_server.queueService.utils.TestUtils;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -21,8 +23,6 @@ public class ServiceQueuingManagerTest {
     ServiceQueuingManager serviceQueuingManager;
     @Autowired
     DeferredServiceQueuingEventHolder deferredServiceQueuingEventHolder;
-    @Autowired
-    QueuedEventTestService queuedEventTestService;
     @Test
     void 단일_이벤트_처리() throws InterruptedException {
         // given
@@ -30,6 +30,7 @@ public class ServiceQueuingManagerTest {
         String clintUniqueKey = "aabbccddeeffz123fvdfqbb124a";
         String method = "testMethod";
         String param = "param1";
+        TestUtils testUtils = new TestUtils();
         // when
         DeferredResult<Object> execute = serviceQueuingManager.execute(
                 result -> {
@@ -38,7 +39,7 @@ public class ServiceQueuingManagerTest {
                             deferredServiceQueuingEventHolder.get(requestId);
                     Assertions.assertFalse(serviceQueuingDetailsDeferredResult.isEmpty());
                     flag[0] = true;
-                }, clintUniqueKey, queuedEventTestService, method, param);
+                }, clintUniqueKey, new TestUtils("Hello"), method, param);
         // then
         Thread.sleep(1000L);
         Assertions.assertTrue(flag[0]);
@@ -80,7 +81,7 @@ public class ServiceQueuingManagerTest {
                             deferredServiceQueuingEventHolder.get(requestId);
                     Assertions.assertFalse(serviceQueuingDetailsDeferredResult.isEmpty());
                     count[0].incrementAndGet();
-                }, clintUniqueKey, queuedEventTestService, method, param);
+                }, clintUniqueKey, new ManagerTestClass(), method, param);
         DeferredResult<Object> execute2 = serviceQueuingManager.execute(
                 result -> {
                     Long requestId = result.getRequestId();
@@ -88,13 +89,14 @@ public class ServiceQueuingManagerTest {
                             deferredServiceQueuingEventHolder.get(requestId);
                     Assertions.assertFalse(serviceQueuingDetailsDeferredResult.isEmpty());
                     count[0].incrementAndGet();
-                }, clintUniqueKey, queuedEventTestService, method, param);
+                }, clintUniqueKey, new ManagerTestClass(), method, param);
         // then
         Thread.sleep(1000L);
         Assertions.assertEquals(count[0].get(), 2);
     }
 
     @Getter
+    @JsonSerialize
     public static class ManagerTestClass implements Serializable {
         public ManagerTestClass() {
         }

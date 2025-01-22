@@ -8,21 +8,18 @@ import com.example.bypass_server.queueService.subscriber.port.ServiceQueuingResu
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
-import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationTargetException;
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class KafkaServiceQueuingEventSubscriber implements ServiceQueuingDetailsSubscriber {
-    private ServiceQueuingResultPublisher resultPublisher;
+public class KafkaServiceQueuingEventSubscriber<ResponseType> implements ServiceQueuingDetailsSubscriber {
+    private ServiceQueuingResultPublisher<ResponseType> resultPublisher;
     private ApplicationServiceExecutor applicationServiceExecutor;
 
-    @Builder
-    private KafkaServiceQueuingEventSubscriber(ServiceQueuingResultPublisher resultPublisher, ApplicationServiceExecutor applicationServiceExecutor) {
+    public KafkaServiceQueuingEventSubscriber(ServiceQueuingResultPublisher<ResponseType> resultPublisher, ApplicationServiceExecutor applicationServiceExecutor) {
         this.resultPublisher = resultPublisher;
         this.applicationServiceExecutor = applicationServiceExecutor;
     }
@@ -35,9 +32,9 @@ public class KafkaServiceQueuingEventSubscriber implements ServiceQueuingDetails
     )
     public void subscribeServiceQueueDetails(ConsumerRecord<String, ServiceQueuingDetails> records, Acknowledgment ack) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         ServiceQueuingDetails details = records.value();
-        Object result = applicationServiceExecutor.execute(details.getTarget(), details.getMethod(), details.getParameters());
+        ResponseType result = (ResponseType) applicationServiceExecutor.execute(details.getTarget(), details.getMethod(), details.getParameters());
         resultPublisher.publishResult(Long.toString(details.getRequestId()),
-                QueuedServiceResult.builder()
+                QueuedServiceResult.<ResponseType>builder()
                         .requestId(details.getRequestId())
                         .response(result)
                         .build()

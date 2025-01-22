@@ -1,5 +1,7 @@
 package com.example.bypass_server.queueService.subscriber.port;
 
-public interface ServiceQueuingResultPublisher {
-    void publishResult(String channel, Object message);
+import com.example.bypass_server.queueService.subscriber.dto.QueuedServiceResult;
+
+public interface ServiceQueuingResultPublisher<T> {
+    void publishResult(String channel, QueuedServiceResult<T> msg);
 }

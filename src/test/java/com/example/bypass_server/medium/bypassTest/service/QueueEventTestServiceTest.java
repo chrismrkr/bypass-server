@@ -1,5 +1,6 @@
 package com.example.bypass_server.medium.bypassTest.service;
 
+import com.example.bypass_server.bypassTest.controller.BypassTestController;
 import com.example.bypass_server.bypassTest.service.QueuedEventTestService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,7 @@ public class QueueEventTestServiceTest {
     void 서비스_호출_테스트() throws InterruptedException {
         // given
         // when
-        DeferredResult<Object> result = queuedEventTestService.doTest("123sfabbaadf1312aafdsaf", "aaaa");
+        DeferredResult<BypassTestController.BypassTestResponseDTO> result = queuedEventTestService.doTest("123sfabbaadf1312aafdsaf", "aaaa");
         // then
         Thread.sleep(1500L);
         Assertions.assertTrue(result.hasResult());

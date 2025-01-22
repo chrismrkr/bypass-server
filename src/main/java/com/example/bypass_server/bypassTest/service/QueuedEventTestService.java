@@ -15,8 +15,10 @@ public class QueuedEventTestService {
     private final ServiceQueuingManager<BypassTestController.BypassTestResponseDTO> serviceQueuingManager;
     private final DeferredServiceQueuingEventHolder<BypassTestController.BypassTestResponseDTO> deferredServiceQueuingEventHolder;
 
-    public DeferredResult<?> doTest(String clientUniqueKey, String s) {
-        DeferredResult<?> execute = serviceQueuingManager.execute((requestId, responseDTO) -> {
+    public DeferredResult<BypassTestController.BypassTestResponseDTO> doTest(String clientUniqueKey, String s) {
+        DeferredResult<BypassTestController.BypassTestResponseDTO> execute = serviceQueuingManager.execute(response -> {
+            Long requestId = response.getRequestId();
+            BypassTestController.BypassTestResponseDTO responseDTO = response.getResponse();
             DeferredResult<BypassTestController.BypassTestResponseDTO> deferredResult = deferredServiceQueuingEventHolder.get(requestId)
                     .get();
             deferredResult.setResult(responseDTO);
@@ -24,8 +26,8 @@ public class QueuedEventTestService {
         return execute;
     }
 
-    public String doService(String s) {
-        return "[doService Method] " + s;
+    public BypassTestController.BypassTestResponseDTO doService(String s) {
+        return new BypassTestController.BypassTestResponseDTO("success", "[doService Method] " + s);
     }
 
 }

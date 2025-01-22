@@ -11,7 +11,6 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Optional;
 
-@Component
 @Slf4j
 @RequiredArgsConstructor
 public class DefaultApplicationServiceExecutor implements ApplicationServiceExecutor {

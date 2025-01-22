@@ -7,12 +7,30 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class QueuedServiceResult {
+public class QueuedServiceResult<T> {
     private Long requestId;
-    private Object response;
-    @Builder
-    private QueuedServiceResult(Long requestId, Object response) {
-        this.requestId = requestId;
-        this.response = response;
+    private T response;
+    private QueuedServiceResult(Builder<T> builder) {
+        this.requestId = builder.requestId;
+        this.response = builder.response;
+    }
+
+    public static class Builder<T> {
+        private Long requestId;
+        private T response;
+        public Builder<T> requestId(Long requestId) {
+            this.requestId = requestId;
+            return this;
+        }
+        public Builder<T> response(T response) {
+            this.response = response;
+            return this;
+        }
+        public QueuedServiceResult<T> build() {
+            return new QueuedServiceResult<T>(this);
+        }
+    }
+    public static <T> Builder<T> builder() {
+        return new Builder<>();
     }
 }

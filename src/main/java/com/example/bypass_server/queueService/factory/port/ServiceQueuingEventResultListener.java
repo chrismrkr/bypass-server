@@ -1,4 +1,4 @@
-package com.example.bypass_server.queueService.adaptor.port;
+package com.example.bypass_server.queueService.factory.port;
 
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 

@@ -1,8 +1,8 @@
-package com.example.bypass_server.queueService.adaptor.impl;
+package com.example.bypass_server.queueService.factory.impl;
 
-import com.example.bypass_server.queueService.adaptor.ServiceQueuingAdaptor;
-import com.example.bypass_server.queueService.adaptor.port.ServiceQueuingEventResultListener;
-import com.example.bypass_server.queueService.adaptor.port.ServiceQueuingEventProducer;
+import com.example.bypass_server.queueService.factory.ServiceQueuingAdaptor;
+import com.example.bypass_server.queueService.factory.port.ServiceQueuingEventResultListener;
+import com.example.bypass_server.queueService.factory.port.ServiceQueuingEventProducer;
 import com.example.bypass_server.queueService.utils.DeferredServiceQueuingEventHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

@@ -33,8 +33,7 @@ public class ServiceQueuingManagerTest {
         TestUtils testUtils = new TestUtils();
         // when
         DeferredResult<Object> execute = serviceQueuingManager.execute(
-                result -> {
-                    Long requestId = result.getRequestId();
+                (requestId, response) -> {
                     Optional<DeferredResult<Object>> serviceQueuingDetailsDeferredResult =
                             deferredServiceQueuingEventHolder.get(requestId);
                     Assertions.assertFalse(serviceQueuingDetailsDeferredResult.isEmpty());
@@ -54,8 +53,7 @@ public class ServiceQueuingManagerTest {
         String param1 = "param1";
         // when
         DeferredResult<Object> execute = serviceQueuingManager.execute(
-                result -> {
-                    Long requestId = result.getRequestId();
+                (requestId, response) -> {
                     Optional<DeferredResult<Object>> serviceQueuingDetailsDeferredResult =
                             deferredServiceQueuingEventHolder.get(requestId);
                     Assertions.assertFalse(serviceQueuingDetailsDeferredResult.isEmpty());
@@ -75,16 +73,14 @@ public class ServiceQueuingManagerTest {
         String param = "param1";
         // when
         DeferredResult<Object> execute1 = serviceQueuingManager.execute(
-                result -> {
-                    Long requestId = result.getRequestId();
+                (requestId, response) -> {
                     Optional<DeferredResult<Object>> serviceQueuingDetailsDeferredResult =
                             deferredServiceQueuingEventHolder.get(requestId);
                     Assertions.assertFalse(serviceQueuingDetailsDeferredResult.isEmpty());
                     count[0].incrementAndGet();
                 }, clintUniqueKey, new ManagerTestClass(), method, param);
         DeferredResult<Object> execute2 = serviceQueuingManager.execute(
-                result -> {
-                    Long requestId = result.getRequestId();
+                (requestId, response) -> {
                     Optional<DeferredResult<Object>> serviceQueuingDetailsDeferredResult =
                             deferredServiceQueuingEventHolder.get(requestId);
                     Assertions.assertFalse(serviceQueuingDetailsDeferredResult.isEmpty());

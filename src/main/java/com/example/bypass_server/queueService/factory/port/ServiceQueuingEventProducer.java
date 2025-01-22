@@ -1,4 +1,4 @@
-package com.example.bypass_server.queueService.adaptor.port;
+package com.example.bypass_server.queueService.factory.port;
 
 import com.example.bypass_server.queueService.domain.ServiceQueuingDetails;
 

@@ -1,17 +1,15 @@
 package com.example.bypass_server.queueService.publisher;
 
 import com.example.bypass_server.queueService.domain.ServiceQueuingDetails;
-import com.example.bypass_server.queueService.adaptor.port.ServiceQueuingEventProducer;
+import com.example.bypass_server.queueService.factory.port.ServiceQueuingEventProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 
 @Component
 @Slf4j

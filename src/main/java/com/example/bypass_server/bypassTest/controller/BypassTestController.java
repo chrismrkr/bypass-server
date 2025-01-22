@@ -32,7 +32,7 @@ public class BypassTestController {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    private static class BypassTestResponseDTO {
+    public static class BypassTestResponseDTO {
         private String status;
         private String message;
     }
@@ -40,7 +40,8 @@ public class BypassTestController {
 
     @AllArgsConstructor
     @Data
-    private static class BypassTestRequestDto {
+    @NoArgsConstructor
+    public static class BypassTestRequestDto {
         private String key;
         private String msg;
     }

@@ -5,9 +5,7 @@ import com.example.bypass_server.queueService.subscriber.ServiceQueuingDetailsSu
 import com.example.bypass_server.queueService.subscriber.dto.QueuedServiceResult;
 import com.example.bypass_server.queueService.subscriber.port.ApplicationServiceExecutor;
 import com.example.bypass_server.queueService.subscriber.port.ServiceQueuingResultPublisher;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -17,12 +15,18 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationTargetException;
 
-@Component
-@RequiredArgsConstructor
 @Slf4j
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class KafkaServiceQueuingEventSubscriber implements ServiceQueuingDetailsSubscriber {
-    private final ServiceQueuingResultPublisher resultPublisher;
-    private final ApplicationServiceExecutor applicationServiceExecutor;
+    private ServiceQueuingResultPublisher resultPublisher;
+    private ApplicationServiceExecutor applicationServiceExecutor;
+
+    @Builder
+    private KafkaServiceQueuingEventSubscriber(ServiceQueuingResultPublisher resultPublisher, ApplicationServiceExecutor applicationServiceExecutor) {
+        this.resultPublisher = resultPublisher;
+        this.applicationServiceExecutor = applicationServiceExecutor;
+    }
+
     @Override
     @KafkaListener(
             topics = {"#{serviceQueuingTopicConsumerConfig.topicName}"},

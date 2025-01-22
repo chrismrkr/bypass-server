@@ -1,7 +1,7 @@
 package com.example.bypass_server.medium.queueService.kafka;
 
 import com.example.bypass_server.queueService.domain.ServiceQueuingDetails;
-import com.example.bypass_server.queueService.adaptor.port.ServiceQueuingEventProducer;
+import com.example.bypass_server.queueService.factory.port.ServiceQueuingEventProducer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

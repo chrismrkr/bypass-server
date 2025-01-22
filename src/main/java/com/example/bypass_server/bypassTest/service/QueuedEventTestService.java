@@ -1,5 +1,6 @@
 package com.example.bypass_server.bypassTest.service;
 
+import com.example.bypass_server.bypassTest.controller.BypassTestController;
 import com.example.bypass_server.queueService.manager.ServiceQueuingManager;
 import com.example.bypass_server.queueService.utils.DeferredServiceQueuingEventHolder;
 import lombok.RequiredArgsConstructor;
@@ -11,14 +12,14 @@ import org.springframework.web.context.request.async.DeferredResult;
 @RequiredArgsConstructor
 @Slf4j
 public class QueuedEventTestService {
-    private final ServiceQueuingManager serviceQueuingManager;
-    private final DeferredServiceQueuingEventHolder deferredServiceQueuingEventHolder;
+    private final ServiceQueuingManager<BypassTestController.BypassTestResponseDTO> serviceQueuingManager;
+    private final DeferredServiceQueuingEventHolder<BypassTestController.BypassTestResponseDTO> deferredServiceQueuingEventHolder;
 
-    public DeferredResult<Object> doTest(String clientUniqueKey, String s) {
-        DeferredResult<Object> execute = serviceQueuingManager.execute(result -> {
-            DeferredResult<Object> objectDeferredResult = deferredServiceQueuingEventHolder.get(result.getRequestId())
+    public DeferredResult<?> doTest(String clientUniqueKey, String s) {
+        DeferredResult<?> execute = serviceQueuingManager.execute((requestId, responseDTO) -> {
+            DeferredResult<BypassTestController.BypassTestResponseDTO> deferredResult = deferredServiceQueuingEventHolder.get(requestId)
                     .get();
-            objectDeferredResult.setResult(result.getResponse());
+            deferredResult.setResult(responseDTO);
         }, clientUniqueKey, "queuedEventTestService", "doService", s);
         return execute;
     }

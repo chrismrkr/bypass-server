@@ -1,6 +1,6 @@
 package com.example.bypass_server.medium.queueService.subscriber;
 
-import com.example.bypass_server.queueService.adaptor.port.ServiceQueuingEventResultListener;
+import com.example.bypass_server.queueService.factory.port.ServiceQueuingEventResultListener;
 import com.example.bypass_server.queueService.publisher.RedisServiceQueuingResultPublisher;
 import com.example.bypass_server.queueService.subscriber.dto.QueuedServiceResult;
 import com.example.bypass_server.queueService.subscriber.handler.ServiceQueuingEventResultHandler;
@@ -9,9 +9,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
-import org.springframework.kafka.core.KafkaTemplate;
 
 @SpringBootTest
 @Slf4j

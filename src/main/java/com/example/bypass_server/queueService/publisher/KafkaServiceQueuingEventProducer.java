@@ -1,7 +1,7 @@
 package com.example.bypass_server.queueService.publisher;
 
 import com.example.bypass_server.queueService.domain.ServiceQueuingDetails;
-import com.example.bypass_server.queueService.factory.port.ServiceQueuingEventProducer;
+import com.example.bypass_server.queueService.manager.port.ServiceQueuingEventProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

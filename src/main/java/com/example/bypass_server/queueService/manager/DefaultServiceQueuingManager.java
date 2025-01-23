@@ -1,12 +1,11 @@
 package com.example.bypass_server.queueService.manager;
 
 import com.example.bypass_server.queueService.domain.ServiceQueuingDetails;
-import com.example.bypass_server.queueService.factory.port.ServiceQueuingEventProducer;
-import com.example.bypass_server.queueService.factory.port.ServiceQueuingEventResultListener;
+import com.example.bypass_server.queueService.manager.port.ServiceQueuingEventProducer;
+import com.example.bypass_server.queueService.manager.port.ServiceQueuingEventResultListener;
 import com.example.bypass_server.queueService.subscriber.handler.ServiceQueuingEventResultHandler;
 import com.example.bypass_server.queueService.utils.DeferredServiceQueuingEventHolder;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;

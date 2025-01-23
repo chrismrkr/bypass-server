@@ -2,10 +2,13 @@ package com.example.bypass_server.config;
 
 import com.example.bypass_server.bypassTest.controller.BypassTestController;
 import com.example.bypass_server.queueService.factory.DefaultServiceQueuingManagerFactory;
-import com.example.bypass_server.queueService.factory.port.ServiceQueuingEventProducer;
-import com.example.bypass_server.queueService.factory.port.ServiceQueuingEventResultListener;
+import com.example.bypass_server.queueService.factory.KafkaServiceQueuingEventSubscriberFactory;
+import com.example.bypass_server.queueService.manager.ServiceQueuingManager;
+import com.example.bypass_server.queueService.manager.port.ServiceQueuingEventProducer;
+import com.example.bypass_server.queueService.manager.port.ServiceQueuingEventResultListener;
 import com.example.bypass_server.queueService.manager.DefaultServiceQueuingManager;
 import com.example.bypass_server.queueService.publisher.RedisServiceQueuingResultPublisher;
+import com.example.bypass_server.queueService.subscriber.ServiceQueuingDetailsSubscriber;
 import com.example.bypass_server.queueService.subscriber.executor.DefaultApplicationServiceExecutor;
 import com.example.bypass_server.queueService.subscriber.impl.KafkaServiceQueuingEventSubscriber;
 import com.example.bypass_server.queueService.utils.DeferredServiceQueuingEventHolder;
@@ -28,7 +31,7 @@ public class ServiceQueuingManagerConfig {
         return new DeferredServiceQueuingEventHolder<BypassTestController.BypassTestResponseDTO>();
     }
     @Bean
-    public DefaultServiceQueuingManager<BypassTestController.BypassTestResponseDTO> defaultServiceQueuingManager() {
+    public ServiceQueuingManager<BypassTestController.BypassTestResponseDTO> defaultServiceQueuingManager() {
         DefaultServiceQueuingManagerFactory<BypassTestController.BypassTestResponseDTO> factory = new DefaultServiceQueuingManagerFactory<>(
                 deferredResultHolder(),
                 queuedEventPublisher, queuedEventResultListener
@@ -46,6 +49,10 @@ public class ServiceQueuingManagerConfig {
     }
     @Bean
     public KafkaServiceQueuingEventSubscriber<BypassTestController.BypassTestResponseDTO> kafkaServiceQueuingEventSubscriber() {
-        return new KafkaServiceQueuingEventSubscriber<BypassTestController.BypassTestResponseDTO>(serviceQueuingResultPublisher(), applicationServiceExecutor());
+        KafkaServiceQueuingEventSubscriberFactory<BypassTestController.BypassTestResponseDTO> factory = new KafkaServiceQueuingEventSubscriberFactory<>(
+                applicationServiceExecutor(),
+                serviceQueuingResultPublisher()
+        );
+        return factory.createInstance();
     }
 }

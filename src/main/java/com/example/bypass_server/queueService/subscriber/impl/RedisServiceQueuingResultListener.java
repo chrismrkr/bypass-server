@@ -1,6 +1,6 @@
 package com.example.bypass_server.queueService.subscriber.impl;
 
-import com.example.bypass_server.queueService.factory.port.ServiceQueuingEventResultListener;
+import com.example.bypass_server.queueService.manager.port.ServiceQueuingEventResultListener;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;

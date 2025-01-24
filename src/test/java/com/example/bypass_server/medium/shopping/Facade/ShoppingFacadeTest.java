@@ -62,7 +62,7 @@ public class ShoppingFacadeTest {
     }
 
     @Test
-    void 상품구매_포인트차감_동시100번요청() {
+    void 상품구매_포인트차감_동시100번요청() throws InterruptedException {
         // given
         Long memberId = 1L;
         ItemEntity itemEntity = itemJpaRepository.save(
@@ -81,12 +81,14 @@ public class ShoppingFacadeTest {
         int threadCount = 100;
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
         CountDownLatch countDownLatch = new CountDownLatch(threadCount);
-        for(long i=0; i<=threadCount; i++) {
+        for(long i=0; i<threadCount; i++) {
             executorService.execute(() -> {
                 shoppingFacade.buy(memberId, itemEntity.getId(), 5);
                 countDownLatch.countDown();
             });
         }
+
+        Thread.sleep(5000L);
         // then
         ItemEntity resultItemEntity = itemJpaRepository.findById(itemEntity.getId()).get();
         ShoppingPointEntity shoppingPointEntity = shoppingPointJpaRepository.findById(memberId).get();

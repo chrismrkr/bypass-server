@@ -14,6 +14,7 @@ public class ServiceQueuingDetails {
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "@class")
     private Object target;
     private String method;
+    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "@class")
     private Object[] parameters;
     @Builder
     private ServiceQueuingDetails(Long requestId, Object target, String method, Object... parameters) {

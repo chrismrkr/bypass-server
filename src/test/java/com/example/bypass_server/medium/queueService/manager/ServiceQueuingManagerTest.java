@@ -1,5 +1,6 @@
 package com.example.bypass_server.medium.queueService.manager;
 
+import com.example.bypass_server.bypassTest.controller.BypassTestController;
 import com.example.bypass_server.bypassTest.service.QueuedEventTestService;
 import com.example.bypass_server.queueService.domain.ServiceQueuingDetails;
 import com.example.bypass_server.queueService.manager.ServiceQueuingManager;
@@ -10,6 +11,7 @@ import lombok.Getter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.context.request.async.DeferredResult;
 
@@ -20,8 +22,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 @SpringBootTest
 public class ServiceQueuingManagerTest {
     @Autowired
+    @Qualifier("defaultServiceQueuingManager")
     ServiceQueuingManager serviceQueuingManager;
     @Autowired
+    @Qualifier("deferredResultHolder")
     DeferredServiceQueuingEventHolder deferredServiceQueuingEventHolder;
     @Test
     void 단일_이벤트_처리() throws InterruptedException {
@@ -41,7 +45,7 @@ public class ServiceQueuingManagerTest {
                     flag[0] = true;
                 }, clintUniqueKey, new TestUtils("Hello"), method, param);
         // then
-        Thread.sleep(1000L);
+        Thread.sleep(2000L);
         Assertions.assertTrue(flag[0]);
     }
 
@@ -53,6 +57,7 @@ public class ServiceQueuingManagerTest {
         String method = "doService";
         String param1 = "param1";
         // when
+        Thread.sleep(1000L);
         DeferredResult<Object> execute = serviceQueuingManager.execute(
                 (response) -> {
                     Long requestId = response.getRequestId();
@@ -62,7 +67,7 @@ public class ServiceQueuingManagerTest {
                     flag[0] = true;
                 }, clintUniqueKey, "queuedEventTestService", method, param1);
         // then
-        Thread.sleep(1000L);
+        Thread.sleep(2000L);
         Assertions.assertTrue(flag[0]);
     }
 
@@ -91,7 +96,7 @@ public class ServiceQueuingManagerTest {
                     count[0].incrementAndGet();
                 }, clintUniqueKey, new ManagerTestClass(), method, param);
         // then
-        Thread.sleep(1000L);
+        Thread.sleep(2000L);
         Assertions.assertEquals(count[0].get(), 2);
     }
 

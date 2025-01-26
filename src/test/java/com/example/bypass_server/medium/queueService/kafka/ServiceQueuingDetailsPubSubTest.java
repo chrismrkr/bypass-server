@@ -5,11 +5,14 @@ import com.example.bypass_server.queueService.manager.port.ServiceQueuingEventPr
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.env.Environment;
 
 @SpringBootTest
 public class ServiceQueuingDetailsPubSubTest {
     @Autowired
     ServiceQueuingEventProducer serviceQueuingEventProducer;
+    @Autowired
+    Environment env;
 
     @Test
     void ServiceQueueDetails를_Kafka_파티션을_통해_PUB_SUB() throws InterruptedException {
@@ -23,7 +26,7 @@ public class ServiceQueuingDetailsPubSubTest {
                 .build();
 
         // when
-        serviceQueuingEventProducer.publish(clientUniqueId, serviceQueuingDetails);
+        serviceQueuingEventProducer.publish(env.getProperty("spring.kafka.topic.service-queuing.topic-name"), clientUniqueId, serviceQueuingDetails);
         Thread.sleep(2000L);
         // then
 

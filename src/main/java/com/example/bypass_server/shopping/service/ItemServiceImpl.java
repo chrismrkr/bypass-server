@@ -17,8 +17,19 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
+    public Item decreaseItem(Long itemId, int amount, LockModeType lockModeType) {
+        Item item = itemRepository.findById(itemId, lockModeType);
+        if(item.getStock() < amount) {
+            throw new IllegalArgumentException("Not Enough Stock");
+        }
+        item.give(amount);
+        return itemRepository.save(item);
+    }
+
+    @Override
+    @Transactional
     public Item decreaseItem(Long itemId, int amount) {
-        Item item = itemRepository.findById(itemId, LockModeType.PESSIMISTIC_WRITE);
+        Item item = itemRepository.findById(itemId);
         if(item.getStock() < amount) {
             throw new IllegalArgumentException("Not Enough Stock");
         }

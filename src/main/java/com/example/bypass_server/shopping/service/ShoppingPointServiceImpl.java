@@ -17,7 +17,17 @@ public class ShoppingPointServiceImpl implements ShoppingPointService {
     @Override
     @Transactional
     public ShoppingPoint decreasePoint(Long memberId, int amount) {
-        ShoppingPoint shoppingPoint = shoppingPointRepository.findById(memberId, LockModeType.PESSIMISTIC_WRITE);
+        ShoppingPoint shoppingPoint = shoppingPointRepository.findById(memberId);
+        if(shoppingPoint.getPoint() < amount) {
+            throw new IllegalArgumentException("Not Enough Points");
+        }
+        shoppingPoint.spend(amount);
+        return shoppingPointRepository.save(shoppingPoint);
+    }
+
+    @Override
+    public ShoppingPoint decreasePoint(Long memberId, int amount, LockModeType lockModeType) {
+        ShoppingPoint shoppingPoint = shoppingPointRepository.findById(memberId, lockModeType);
         if(shoppingPoint.getPoint() < amount) {
             throw new IllegalArgumentException("Not Enough Points");
         }

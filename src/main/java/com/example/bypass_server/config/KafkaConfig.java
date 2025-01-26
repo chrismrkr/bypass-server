@@ -46,15 +46,7 @@ public class KafkaConfig {
         );
     }
 
-    @Bean(name = "serviceQueuingTopicConsumerConfig")
-    public ConsumerBriefConfig serviceQueuingTopicConsumerConfig() {
-        ConsumerBriefConfig kafkaConsumerConfigUtils = new ConsumerBriefConfig();
-        kafkaConsumerConfigUtils.setTopicName(env.getProperty("spring.kafka.topic.service-queuing.topic-name"));
-        kafkaConsumerConfigUtils.setGroupId(env.getProperty("spring.kafka.topic.service-queuing.group-id"));
-        return kafkaConsumerConfigUtils;
-    }
-
-    @Bean(name = "serviceQueuingTopicKafkaConsumerFactory")
+//    @Bean(name = "serviceQueuingTopicKafkaConsumerFactory")
     public ConcurrentKafkaListenerContainerFactory<String, ServiceQueuingDetails> serviceQueuingTopicKafkaConsumerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, ServiceQueuingDetails> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(serviceQueuingTopicConsumerFactory());

@@ -1,18 +1,16 @@
-package com.example.bypass_server.config;
+package com.example.bypass_server.shopping.config;
 
-import com.example.bypass_server.bypassTest.controller.BypassTestController;
 import com.example.bypass_server.queueService.domain.ServiceQueuingDetails;
 import com.example.bypass_server.queueService.factory.DefaultServiceQueuingManagerFactory;
 import com.example.bypass_server.queueService.factory.KafkaServiceQueuingEventSubscriberFactory;
 import com.example.bypass_server.queueService.manager.ServiceQueuingManager;
 import com.example.bypass_server.queueService.manager.port.ServiceQueuingEventProducer;
 import com.example.bypass_server.queueService.manager.port.ServiceQueuingEventResultListener;
-import com.example.bypass_server.queueService.manager.DefaultServiceQueuingManager;
 import com.example.bypass_server.queueService.publisher.RedisServiceQueuingResultPublisher;
-import com.example.bypass_server.queueService.subscriber.ServiceQueuingDetailsSubscriber;
-import com.example.bypass_server.queueService.subscriber.executor.DefaultApplicationServiceExecutor;
 import com.example.bypass_server.queueService.subscriber.impl.KafkaServiceQueuingEventSubscriber;
 import com.example.bypass_server.queueService.utils.DeferredServiceQueuingEventHolder;
+import com.example.bypass_server.shopping.controller.dto.ShoppingResponseDto;
+import com.example.bypass_server.queueService.subscriber.executor.DefaultApplicationServiceExecutor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -24,7 +22,7 @@ import org.springframework.kafka.listener.KafkaMessageListenerContainer;
 
 @Configuration
 @RequiredArgsConstructor
-public class ServiceQueuingManagerConfig {
+public class ShoppingServiceQueuingManagerConfig {
     private final ServiceQueuingEventProducer queuedEventPublisher;
     private final ServiceQueuingEventResultListener queuedEventResultListener;
     private final ConsumerFactory<String, ServiceQueuingDetails> queuedEventConsumerFactory;
@@ -32,43 +30,45 @@ public class ServiceQueuingManagerConfig {
     private final RedisTemplate<String, Object> genericRedisTemplate;
     private final Environment env;
 
-    @Bean
-    public ServiceQueuingManager<BypassTestController.BypassTestResponseDTO> defaultServiceQueuingManager() {
-        DefaultServiceQueuingManagerFactory<BypassTestController.BypassTestResponseDTO> factory = new DefaultServiceQueuingManagerFactory<>(
-                env.getProperty("spring.kafka.topic.service-queuing.topic-name"),
-                deferredResultHolder(),
+    @Bean(name = "shoppingResponseDeferredEventHolder")
+    public DeferredServiceQueuingEventHolder<ShoppingResponseDto> shoppingResponseDeferredEventHolder() {
+        return new DeferredServiceQueuingEventHolder<ShoppingResponseDto>();
+    }
+    @Bean(name = "shoppingServiceQueuingManager")
+    public ServiceQueuingManager<ShoppingResponseDto> shoppingServiceQueuingManager() {
+        DefaultServiceQueuingManagerFactory<ShoppingResponseDto> factory = new DefaultServiceQueuingManagerFactory<>(
+                env.getProperty("spring.kafka.topic.shopping.item.topic-name"),
+                shoppingResponseDeferredEventHolder(),
                 queuedEventPublisher,
-                kafkaServiceQueuingEventSubscriber(),
+                shoppingServiceQueuingEventSubscriber(),
                 queuedEventResultListener
         );
         return factory.createManager();
     }
-    @Bean
-    public DeferredServiceQueuingEventHolder<BypassTestController.BypassTestResponseDTO> deferredResultHolder() {
-        return new DeferredServiceQueuingEventHolder<BypassTestController.BypassTestResponseDTO>();
-    }
-    @Bean
-    public DefaultApplicationServiceExecutor applicationServiceExecutor() {
+
+    @Bean(name = "ShoppingServiceExecutor")
+    public DefaultApplicationServiceExecutor shoppingServiceExecutor() {
         return new DefaultApplicationServiceExecutor(applicationContext);
     }
-    @Bean
-    public RedisServiceQueuingResultPublisher<BypassTestController.BypassTestResponseDTO> serviceQueuingResultPublisher() {
+    @Bean(name = "shoppingServiceResultPublisher")
+    public RedisServiceQueuingResultPublisher<ShoppingResponseDto> shoppingServiceResultPublisher() {
         return new RedisServiceQueuingResultPublisher<>(genericRedisTemplate);
     }
-    @Bean
-    public KafkaServiceQueuingEventSubscriber<BypassTestController.BypassTestResponseDTO> kafkaServiceQueuingEventSubscriber() {
+
+    @Bean(name = "shoppingServiceQueuingEventSubscriber")
+    public KafkaServiceQueuingEventSubscriber<ShoppingResponseDto> shoppingServiceQueuingEventSubscriber() {
         return new KafkaServiceQueuingEventSubscriber<>(
-                serviceQueuingResultPublisher(),
-                applicationServiceExecutor(),
+                shoppingServiceResultPublisher(),
+                shoppingServiceExecutor(),
                 queuedEventConsumerFactory
         );
     }
 
-    @Bean
-    public KafkaMessageListenerContainer<String, ServiceQueuingDetails> defaultQueuedEventListener() {
-        String topic = env.getProperty("spring.kafka.topic.service-queuing.topic-name");
-        String groupId = env.getProperty("spring.kafka.topic.service-queuing.group-id");
-        KafkaMessageListenerContainer<String, ServiceQueuingDetails> listener = kafkaServiceQueuingEventSubscriber().createListener(topic, groupId);
+    @Bean(name = "shoppingQueuedEventListener")
+    public KafkaMessageListenerContainer<String, ServiceQueuingDetails> shoppingQueuedEventListener() {
+        String topic = env.getProperty("spring.kafka.topic.shopping.item.topic-name");
+        String groupId = env.getProperty("spring.kafka.topic.shopping.item.group-id");
+        KafkaMessageListenerContainer<String, ServiceQueuingDetails> listener = shoppingServiceQueuingEventSubscriber().createListener(topic, groupId);
         listener.start();
         return listener;
     }

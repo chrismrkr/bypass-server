@@ -16,6 +16,11 @@ public class ShoppingController {
     private final ShoppingFacade shoppingFacade;
     @PatchMapping("/item")
     public ShoppingResponseDto handleShopping(@RequestBody ShoppingRequestDto dto) {
-        return shoppingFacade.buy(dto.getMemberId(), dto.getItemId(), dto.getAmount());
+        return shoppingFacade.buy(dto.getMemberId(), dto.getItemId(), dto.getAmount(), true);
+    }
+
+    @PatchMapping("/event/item")
+    public ShoppingResponseDto handleShoppingEvent(@RequestBody ShoppingRequestDto dto) {
+        return shoppingFacade.buy(dto.getMemberId(), dto.getItemId(), dto.getAmount(), false);
     }
 }

@@ -15,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.web.context.request.async.DeferredResult;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -54,7 +55,7 @@ public class ShoppingFacadeTest {
                         .build().toEntity()
         );
         // when
-        ShoppingResponseDto buy = shoppingFacade.buy(memberId, itemEntity.getId(), 10);
+        ShoppingResponseDto buy = shoppingFacade.buy(memberId, itemEntity.getId(), 10, true);
         // then
         Assertions.assertEquals(990, itemJpaRepository.findById(itemEntity.getId()).get().getStock());
         Assertions.assertEquals(9990L, shoppingPointJpaRepository.findById(memberId).get().getPoint());
@@ -83,12 +84,72 @@ public class ShoppingFacadeTest {
         CountDownLatch countDownLatch = new CountDownLatch(threadCount);
         for(long i=0; i<threadCount; i++) {
             executorService.execute(() -> {
-                shoppingFacade.buy(memberId, itemEntity.getId(), 5);
+                shoppingFacade.buy(memberId, itemEntity.getId(), 5, true);
                 countDownLatch.countDown();
             });
         }
 
         Thread.sleep(5000L);
+        // then
+        ItemEntity resultItemEntity = itemJpaRepository.findById(itemEntity.getId()).get();
+        ShoppingPointEntity shoppingPointEntity = shoppingPointJpaRepository.findById(memberId).get();
+        Assertions.assertEquals(500, resultItemEntity.getStock());
+        Assertions.assertEquals(10000L - 500L, shoppingPointEntity.getPoint());
+    }
+
+    @Test
+    void 상품구매_포인트차감_순차처리_이벤트() throws InterruptedException {
+        // given
+        Long memberId = 1L;
+        ItemEntity itemEntity = itemJpaRepository.save(
+                Item.builder()
+                        .itemName("TEST_ITEM")
+                        .stock(1000)
+                        .price(1)
+                        .build().toEntity());
+        ShoppingPointEntity shoppingPoint = shoppingPointJpaRepository.save(
+                ShoppingPoint.builder()
+                        .memberId(memberId)
+                        .point(10000L)
+                        .build().toEntity()
+        );
+        // when
+        DeferredResult<ShoppingResponseDto> deferredResult = shoppingFacade.buyEvent(memberId, itemEntity.getId(), 10);
+        Thread.sleep(1000L);
+        // then
+        Assertions.assertEquals(990, itemJpaRepository.findById(itemEntity.getId()).get().getStock());
+        Assertions.assertEquals(9990L, shoppingPointJpaRepository.findById(memberId).get().getPoint());
+        Assertions.assertNotNull(deferredResult);
+    }
+
+    @Test
+    void 상품구매_포인트차감_순차처리_이벤트_동시100번() throws InterruptedException {
+        // given
+        Long memberId = 1L;
+        ItemEntity itemEntity = itemJpaRepository.save(
+                Item.builder()
+                        .itemName("TEST_ITEM")
+                        .stock(1000)
+                        .price(1)
+                        .build().toEntity());
+        ShoppingPointEntity shoppingPoint = shoppingPointJpaRepository.save(
+                ShoppingPoint.builder()
+                        .memberId(memberId)
+                        .point(10000L)
+                        .build().toEntity()
+        );
+        // when
+        int threadCount = 100;
+        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
+        CountDownLatch countDownLatch = new CountDownLatch(threadCount);
+        for(long i=0; i<threadCount; i++) {
+            executorService.execute(() -> {
+                shoppingFacade.buyEvent(memberId, itemEntity.getId(), 5);
+                countDownLatch.countDown();
+            });
+        }
+
+        Thread.sleep(1000L);
         // then
         ItemEntity resultItemEntity = itemJpaRepository.findById(itemEntity.getId()).get();
         ShoppingPointEntity shoppingPointEntity = shoppingPointJpaRepository.findById(memberId).get();

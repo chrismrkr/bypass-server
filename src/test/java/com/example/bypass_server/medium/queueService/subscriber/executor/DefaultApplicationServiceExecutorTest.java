@@ -81,6 +81,21 @@ public class DefaultApplicationServiceExecutorTest {
     }
 
     @Test
+    void 복합_파라미터2() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        // given
+        TestClass testClass = new TestClass();
+        TestClass.InnerClass innerClass = new TestClass.InnerClass(0);
+        // when
+        Long a = 1L;
+        Long b = 2L;
+        int c = 3;
+        boolean d = true;
+        Object result = serviceExecutor.execute(testClass, "testMultipleParam2", a, b, c, d);
+        // then
+        Assertions.assertNotNull(result);
+    }
+
+    @Test
     void 존재하지_않는_함수() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         // given
         TestClass testClass = new TestClass();
@@ -106,6 +121,9 @@ public class DefaultApplicationServiceExecutorTest {
 
         public boolean testMultipleParam(int i, String a) {
             return true;
+        }
+        public Long testMultipleParam2(Long a, Long b, int c, boolean d) {
+            return a + b + c + (d ? 1: 0);
         }
 
         public boolean testMultipleParam2(Integer i1, Integer i2, int i3) { return true; }

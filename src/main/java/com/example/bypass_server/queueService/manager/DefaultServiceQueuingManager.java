@@ -3,6 +3,7 @@ package com.example.bypass_server.queueService.manager;
 import com.example.bypass_server.queueService.domain.ServiceQueuingDetails;
 import com.example.bypass_server.queueService.manager.port.ServiceQueuingEventProducer;
 import com.example.bypass_server.queueService.manager.port.ServiceQueuingEventResultListener;
+import com.example.bypass_server.queueService.subscriber.ServiceQueuingDetailsSubscriber;
 import com.example.bypass_server.queueService.subscriber.handler.ServiceQueuingEventResultHandler;
 import com.example.bypass_server.queueService.utils.DeferredServiceQueuingEventHolder;
 import lombok.AccessLevel;
@@ -16,16 +17,20 @@ import java.util.concurrent.ThreadLocalRandom;
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DefaultServiceQueuingManager<ResponseType> implements ServiceQueuingManager<ResponseType> {
-    private ServiceQueuingEventProducer queuedEventPublisher;
+    private String topic;
     private DeferredServiceQueuingEventHolder<ResponseType> deferredResultHolder;
+    private ServiceQueuingEventProducer queuedEventPublisher;
+    private ServiceQueuingDetailsSubscriber<ResponseType> queuedEventSubscriber;
     private ServiceQueuingEventResultListener queuedEventResultListener;
 
     private static final long TIMEOUT_MILLIS = 5000L;
     private static final String TIMEOUT_MSG = "TIME_OUT";
 
-    public DefaultServiceQueuingManager(ServiceQueuingEventProducer queuedEventPublisher, DeferredServiceQueuingEventHolder<ResponseType> deferredResultHolder, ServiceQueuingEventResultListener queuedEventResultListener) {
-        this.queuedEventPublisher = queuedEventPublisher;
+    public DefaultServiceQueuingManager(String topic, DeferredServiceQueuingEventHolder<ResponseType> deferredResultHolder, ServiceQueuingEventProducer queuedEventPublisher, ServiceQueuingDetailsSubscriber<ResponseType> queuedEventSubscriber, ServiceQueuingEventResultListener queuedEventResultListener) {
+        this.topic = topic;
         this.deferredResultHolder = deferredResultHolder;
+        this.queuedEventPublisher = queuedEventPublisher;
+        this.queuedEventSubscriber = queuedEventSubscriber;
         this.queuedEventResultListener = queuedEventResultListener;
     }
 
@@ -45,7 +50,7 @@ public class DefaultServiceQueuingManager<ResponseType> implements ServiceQueuin
                 .method(method)
                 .parameters(param)
                 .build();
-        this.queuedEventPublisher.publish(partitioningKey, details);
+        this.queuedEventPublisher.publish(this.topic, partitioningKey, details);
 
         return request;
     }

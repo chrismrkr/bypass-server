@@ -42,6 +42,7 @@ public class ShoppingFacadeImpl implements ShoppingFacade {
         try {
             return this.executeBuying(memberId, itemId, amount, pessimisticLock);
         } catch (Exception e) {
+            log.error("[ERROR] {}", e.getMessage());
             return ShoppingResponseDto.builder()
                     .status("F")
                     .message(e.getMessage())

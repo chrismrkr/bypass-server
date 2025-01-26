@@ -10,7 +10,7 @@ public class ShoppingPoint {
     private Long point;
 
     public void spend(int amount) {
-        this.point -= amount;
+        this.point -= (long)amount;
     }
     @Builder
     private ShoppingPoint(Long memberId, Long point) {

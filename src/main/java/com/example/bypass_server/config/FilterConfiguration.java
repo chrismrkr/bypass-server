@@ -24,7 +24,7 @@ public class FilterConfiguration {
         FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<>();
         filterRegistrationBean.setFilter(requestValidCheckFilter());
         filterRegistrationBean.setOrder(1);
-        filterRegistrationBean.addUrlPatterns("/*");
+        filterRegistrationBean.addUrlPatterns("/dup-check-test");
         return filterRegistrationBean;
     }
 

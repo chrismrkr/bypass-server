@@ -16,7 +16,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new UrlValidationInterceptor(lockStorage, env))
-                .addPathPatterns("/**");
+                .addPathPatterns("/dup-check-test");
 
     }
 }

@@ -41,6 +41,7 @@ public class KafkaServiceQueuingEventSubscriber<ResponseType> implements Service
         containerProperties.setMessageListener((AcknowledgingMessageListener<String, ServiceQueuingDetails>) (record, ack) -> {
             try {
                 ServiceQueuingDetails details = record.value();
+                log.info("[Queued Event Subscribed] {} {}", details.getTarget(), details.getMethod());
                 ResponseType result = (ResponseType) applicationServiceExecutor.execute(details.getTarget(), details.getMethod(), details.getParameters());
                 resultPublisher.publishResult(Long.toString(details.getRequestId()),
                         QueuedServiceResult.<ResponseType>builder()

@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.async.DeferredResult;
 
 @RestController
 @Slf4j
@@ -20,7 +21,7 @@ public class ShoppingController {
     }
 
     @PatchMapping("/event/item")
-    public ShoppingResponseDto handleShoppingEvent(@RequestBody ShoppingRequestDto dto) {
-        return shoppingFacade.buy(dto.getMemberId(), dto.getItemId(), dto.getAmount(), false);
+    public DeferredResult<ShoppingResponseDto> handleShoppingEvent(@RequestBody ShoppingRequestDto dto) {
+        return shoppingFacade.buyEvent(dto.getMemberId(), dto.getItemId(), dto.getAmount());
     }
 }

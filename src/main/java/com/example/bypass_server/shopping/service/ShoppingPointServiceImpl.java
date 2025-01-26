@@ -26,6 +26,7 @@ public class ShoppingPointServiceImpl implements ShoppingPointService {
     }
 
     @Override
+    @Transactional
     public ShoppingPoint decreasePoint(Long memberId, int amount, LockModeType lockModeType) {
         ShoppingPoint shoppingPoint = shoppingPointRepository.findById(memberId, lockModeType);
         if(shoppingPoint.getPoint() < amount) {

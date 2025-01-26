@@ -25,6 +25,7 @@ public class KafkaServiceQueuingEventProducer implements ServiceQueuingEventProd
 
     @Override
     public void publish(String topic, String partitioningKey, ServiceQueuingDetails details) {
+        log.info("[Queued Event Publish] {} {}", details.getTarget(), details.getMethod());
         kafkaTemplate.send(Objects.requireNonNull(topic), partitioningKey, details);
     }
 }

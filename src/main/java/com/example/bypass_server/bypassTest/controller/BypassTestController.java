@@ -17,18 +17,6 @@ public class BypassTestController {
         return "dup-check-test-ok";
     }
 
-    @RequestMapping("/fcfs-check-test")
-    public Object fcfsTestHandler() {
-        return "fcfs-check-test";
-    }
-
-    @PostMapping("/queued-event-test")
-    public DeferredResult<BypassTestResponseDTO> queuedEventHandler(@RequestBody BypassTestRequestDto requestDto) {
-        queuedEventTestService.doTest(requestDto.getKey(), requestDto.getMsg());
-        return null;
-    }
-
-
     @Data
     @AllArgsConstructor
     @NoArgsConstructor

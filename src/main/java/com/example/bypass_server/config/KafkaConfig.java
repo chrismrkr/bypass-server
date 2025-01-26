@@ -69,16 +69,16 @@ public class KafkaConfig {
         );
     }
 
-    @Bean
-    public ObjectMapper objectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.activateDefaultTyping(BasicPolymorphicTypeValidator.builder()
-                .allowIfSubType(Object.class)
-                .build(), ObjectMapper.DefaultTyping.NON_FINAL
-        );
-        return objectMapper;
-    }
+//    @Bean
+//    public ObjectMapper objectMapper() {
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        objectMapper.registerModule(new JavaTimeModule());
+//        objectMapper.activateDefaultTyping(BasicPolymorphicTypeValidator.builder()
+//                .allowIfSubType(Object.class)
+//                .build(), ObjectMapper.DefaultTyping.NON_FINAL
+//        );
+//        return objectMapper;
+//    }
 
     @Bean
     public JsonDeserializer<ServiceQueuingDetails> jsonDeserializer() {

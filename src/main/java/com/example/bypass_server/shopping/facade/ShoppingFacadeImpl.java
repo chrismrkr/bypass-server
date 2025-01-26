@@ -38,23 +38,9 @@ public class ShoppingFacadeImpl implements ShoppingFacade {
     }
 
     @Override
-    @Transactional
     public ShoppingResponseDto buy(Long memberId, Long itemId, int amount, boolean pessimisticLock) {
         try {
-            Item item = null;
-            ShoppingPoint remains = null;
-            if(pessimisticLock) {
-                item = itemService.decreaseItem(itemId, amount, LockModeType.PESSIMISTIC_WRITE);
-                remains = shoppingPointService.decreasePoint(memberId, item.getPrice() * amount, LockModeType.PESSIMISTIC_WRITE);
-            } else {
-                item = itemService.decreaseItem(itemId, amount);
-                remains = shoppingPointService.decreasePoint(memberId, item.getPrice() * amount);
-            }
-            return ShoppingResponseDto.builder()
-                    .status("S")
-                    .message(item.getItemName())
-                    .totalPrice((long)amount * (long)item.getPrice())
-                    .build();
+            return this.executeBuying(memberId, itemId, amount, pessimisticLock);
         } catch (Exception e) {
             return ShoppingResponseDto.builder()
                     .status("F")
@@ -64,12 +50,31 @@ public class ShoppingFacadeImpl implements ShoppingFacade {
         }
     }
 
+    @Transactional
+    private ShoppingResponseDto executeBuying(Long memberId, Long itemId, int amount, boolean pessimisticLock) {
+        Item item = null;
+        ShoppingPoint remains = null;
+        if(pessimisticLock) {
+            item = itemService.decreaseItem(itemId, amount, LockModeType.PESSIMISTIC_WRITE);
+            remains = shoppingPointService.decreasePoint(memberId, item.getPrice() * amount, LockModeType.PESSIMISTIC_WRITE);
+        } else {
+            item = itemService.decreaseItem(itemId, amount);
+            remains = shoppingPointService.decreasePoint(memberId, item.getPrice() * amount);
+        }
+        return ShoppingResponseDto.builder()
+                .status("S")
+                .message(item.getItemName())
+                .totalPrice((long)amount * (long)item.getPrice())
+                .build();
+    }
+
     @Override
     public DeferredResult<ShoppingResponseDto> buyEvent(Long memberId, Long itemId, int amount) {
         String partitionKey = memberId + "-" + itemId;
         return serviceQueuingManager.execute((response) -> {
             DeferredResult<ShoppingResponseDto> deferredResult = deferredEventHolder.get(response.getRequestId())
                     .orElseThrow(() -> new RuntimeException("Result Not Found"));
+            deferredEventHolder.delete(response.getRequestId());
             deferredResult.setResult(response.getResponse());
         }, partitionKey, "shoppingFacadeImpl", "buy", memberId, itemId, amount, false);
     }

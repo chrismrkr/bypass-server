@@ -1,0 +1,85 @@
+services:
+  load-balancer:
+    image: nginx:latest
+    container_name: queued-event-process-load-balancer
+    volumes:
+      - ./default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "80:80"
+    depends_on:
+      - api-container1
+      - api-container2
+
+  api-container1:
+    image: queued-event-process-api:latest
+    container_name: api-container1
+    ports:
+      - "8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://queued-event-process-db:3306/edu?useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATA_REDIS_HOST: queued-event-process-redis
+      SPRING_DATA_REDIS_SERVICE-QUEUING_BROADCAST-CHANNEL: service-queuing-broadcast
+      SPRING_KAFKA_BOOTSTRAP-SERVERS: queued-event-process-kafka:9092
+      SPRING_KAFKA_TOPIC_SHOPPING_ITEM_TOPIC-NAME: item-service-queuing
+      SPRING_KAFKA_TOPIC_SHOPPING_ITEM_GROUP-ID: item-service-queuing-consumer
+    depends_on:
+      - queued-event-process-db
+      - queued-event-process-redis
+      - queued-event-process-kafka
+    restart: always
+
+  api-container2:
+    image: queued-event-process-api:latest
+    container_name: api-container2
+    ports:
+      - "8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://queued-event-process-db:3306/edu?useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATA_REDIS_HOST: queued-event-process-redis
+      SPRING_DATA_REDIS_SERVICE-QUEUING_BROADCAST-CHANNEL: service-queuing-broadcast
+      SPRING_KAFKA_BOOTSTRAP-SERVERS: queued-event-process-kafka:9092
+      SPRING_KAFKA_TOPIC_SHOPPING_ITEM_TOPIC-NAME: item-service-queuing
+      SPRING_KAFKA_TOPIC_SHOPPING_ITEM_GROUP-ID: item-service-queuing-consumer
+    depends_on:
+      - queued-event-process-db
+      - queued-event-process-redis
+      - queued-event-process-kafka
+    restart: always
+
+  queued-event-process-db:
+    image: mysql:latest
+    container_name: queued-event-process-db
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_USER=root
+      - MYSQL_ROOT_PASSWORD=1234
+      - MYSQL_DATABASE=edu
+
+  queued-event-process-redis:
+    image: redis:latest
+    container_name: queued-event-process-redis
+    ports:
+      - "6379:6379"
+
+  queued-event-process-zookeeper:
+    image: wurstmeister/zookeeper:latest
+    container_name: queued-event-process-zookeeper
+    ports:
+      - "2181:2181"
+
+  queued-event-process-kafka:
+    image: wurstmeister/kafka:latest
+    container_name: queued-event-process-kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: queued-event-process-zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092  # Kafka 브로커가 대기할 인터페이스 설정
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://queued-event-process-kafka:9092  # 외부 클라이언트가 접근할 Kafka 브로커 주소
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - queued-event-process-zookeeper
+    restart: always

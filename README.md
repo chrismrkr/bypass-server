@@ -1,6 +1,10 @@
 # Request Sequential Processor
 
+Http Request Sequential Process using Event Stream & Message Queue
+
 Blog: https://okkkk-aanng.tistory.com/38
+
+![Image](https://github.com/user-attachments/assets/ed77cbfd-2e50-4205-a302-41ffdefad216)
 
 
 
